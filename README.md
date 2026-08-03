@@ -3,7 +3,7 @@
 Ứng dụng Next.js (App Router) + SQLite (better-sqlite3) + thư viện `family-chart`
 để quản lý và hiển thị cây phả hệ gia đình.
 
-## Kiến trúc
+## Kiến trúc 
 
 ```
 family-tree-app/
