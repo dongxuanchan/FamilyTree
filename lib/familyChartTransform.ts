@@ -2,8 +2,7 @@ import db from "./db";
 
 export interface PersonRow {
   id: string;
-  first_name: string;
-  last_name: string;
+  full_name: string;
   gender: "M" | "F";
   birth_date: string | null;
   death_date: string | null;
@@ -21,8 +20,7 @@ interface RelRow {
 export interface FamilyChartNode {
   id: string;
   data: {
-    "first name": string;
-    "last name": string;
+    "full name": string;
     gender: "M" | "F";
     birthday?: string;
     "death date"?: string;
@@ -46,8 +44,7 @@ export function getFamilyChartData(): FamilyChartNode[] {
     nodes.set(p.id, {
       id: p.id,
       data: {
-        "first name": p.first_name,
-        "last name": p.last_name,
+        "full name": p.full_name,
         gender: p.gender,
         ...(p.birth_date ? { birthday: p.birth_date } : {}),
         ...(p.death_date ? { "death date": p.death_date } : {}),

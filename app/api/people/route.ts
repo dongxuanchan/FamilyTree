@@ -12,20 +12,20 @@ export async function GET() {
 // POST /api/people -> tạo một người mới (chưa có quan hệ)
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  const { first_name, last_name = "", gender, birth_date, death_date, avatar, notes } = body;
+  const { full_name, gender, birth_date, death_date, avatar, notes } = body;
 
-  if (!first_name || !gender) {
+  if (!full_name || !gender) {
     return NextResponse.json(
-      { error: "Thiếu 'first_name' hoặc 'gender' (M/F)" },
+      { error: "Thiếu 'full_name' hoặc 'gender' (M/F)" },
       { status: 400 }
     );
   }
 
   const id = uuidv4();
   db.prepare(
-    `INSERT INTO people (id, first_name, last_name, gender, birth_date, death_date, avatar, notes)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
-  ).run(id, first_name, last_name, gender, birth_date ?? null, death_date ?? null, avatar ?? null, notes ?? null);
+    `INSERT INTO people (id, full_name, gender, birth_date, death_date, avatar, notes)
+     VALUES (?, ?, ?, ?, ?, ?, ?)`
+  ).run(id, full_name, gender, birth_date ?? null, death_date ?? null, avatar ?? null, notes ?? null);
 
   return NextResponse.json({ id }, { status: 201 });
 }

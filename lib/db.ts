@@ -22,8 +22,7 @@ db.pragma("foreign_keys = ON");
 db.exec(`
   CREATE TABLE IF NOT EXISTS people (
     id TEXT PRIMARY KEY,
-    first_name TEXT NOT NULL,
-    last_name TEXT DEFAULT '',
+    full_name TEXT NOT NULL,
     gender TEXT CHECK(gender IN ('M','F')) NOT NULL DEFAULT 'M',
     birth_date TEXT,
     death_date TEXT,

@@ -14,7 +14,7 @@ export async function PUT(req: NextRequest, { params }: Params) {
     return NextResponse.json({ error: "Không tìm thấy người này" }, { status: 404 });
   }
 
-  const fields = ["first_name", "last_name", "gender", "birth_date", "death_date", "avatar", "notes"];
+  const fields = ["full_name", "gender", "birth_date", "death_date", "avatar", "notes"];
   const updates: string[] = [];
   const values: unknown[] = [];
   for (const f of fields) {

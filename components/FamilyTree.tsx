@@ -5,21 +5,29 @@ import PersonForm from "./PersonForm";
 import RelationshipForm from "./RelationshipForm";
 import type { FamilyChartNode } from "@/lib/familyChartTransform";
 
+function getInitials(fullName: string): string {
+  if (!fullName) return "";
+
+  return fullName
+    .trim() // Loại bỏ khoảng trắng ở hai đầu
+    .split(/\s+/) // Tách chuỗi thành mảng các từ, xử lý cả trường hợp có nhiều khoảng trắng liên tiếp
+    .map(word => word.charAt(0).toUpperCase()) // Lấy ký tự đầu tiên và viết hoa
+    .join(''); // Ghép các ký tự lại thành một chuỗi duy nhất
+}
+
 // Tạo HTML riêng cho mỗi card trong cây thay vì dùng template mặc định của family-chart
 function buildCardHtml(d: any): string {
   // TreeDatum của family-chart có thể lồng thêm 1 cấp (d.data.data) tùy version -
   // dòng dưới thử cả 2 khả năng để chắc chắn lấy đúng object chứa "first name", "gender"...
   const person = d?.data?.data ?? d?.data ?? d ?? {};
 
-  const first: string = person["first name"] ?? "";
-  const last: string = person["last name"] ?? "";
+  const fullname: string = person["full name"] ?? "";
   const gender: string = person.gender;
   const birthday: string | undefined = person.birthday;
   const death: string | undefined = person["death date"];
   const avatar: string | undefined = person.avatar;
 
-  const initials =
-    `${first.charAt(0)}${last.charAt(0)}`.toUpperCase() || "?";
+  const initials = getInitials(`${fullname}`);
 
   const genderClass =
     gender === "F" ? "fc-card--female" : gender === "M" ? "fc-card--male" : "fc-card--unknown";
@@ -27,14 +35,14 @@ function buildCardHtml(d: any): string {
   const years = birthday ? `${birthday}${death ? " – " + death : " – nay"}` : "";
 
   const avatarHtml = avatar
-    ? `<img class="fc-card__avatar fc-card__avatar--img" src="${avatar}" alt="${first}" />`
+    ? `<img class="fc-card__avatar fc-card__avatar--img" src="${avatar}" alt="${fullname}" />`
     : `<div class="fc-card__avatar">${initials}</div>`;
 
   return `
     <div class="fc-card ${genderClass}">
       ${avatarHtml}
       <div class="fc-card__body">
-        <div class="fc-card__name">${first} ${last}</div>
+        <div class="fc-card__name">${fullname}</div>
         ${years ? `<div class="fc-card__years">${years}</div>` : ""}
       </div>
     </div>

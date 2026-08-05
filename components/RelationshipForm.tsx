@@ -16,7 +16,7 @@ export default function RelationshipForm({ people, onClose, onSaved }: Props) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
-  const label = (p: FamilyChartNode) => `${p.data["first name"]} ${p.data["last name"]}`.trim();
+  const label = (p: FamilyChartNode) => `${p.data["full name"]}`.trim();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

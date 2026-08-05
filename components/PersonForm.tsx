@@ -33,8 +33,7 @@ function resizeImageToDataUrl(file: File, maxSize = 200): Promise<string> {
 }
 
 export default function PersonForm({ onClose, onSaved }: Props) {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [fullName, setFullName] = useState("");
   const [gender, setGender] = useState<"M" | "F">("M");
   const [birthDate, setBirthDate] = useState("");
   const [avatar, setAvatar] = useState<string | null>(null);
@@ -59,7 +58,7 @@ export default function PersonForm({ onClose, onSaved }: Props) {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!firstName.trim()) {
+    if (!fullName.trim()) {
       setError("Vui lòng nhập tên");
       return;
     }
@@ -70,8 +69,7 @@ export default function PersonForm({ onClose, onSaved }: Props) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          first_name: firstName.trim(),
-          last_name: lastName.trim(),
+          full_name: fullName.trim(),
           gender,
           birth_date: birthDate || null,
           avatar
@@ -102,7 +100,7 @@ export default function PersonForm({ onClose, onSaved }: Props) {
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={avatar} alt="Xem trước avatar" />
                 ) : (
-                  <span>{firstName.charAt(0).toUpperCase() || "?"}</span>
+                  <span>{fullName.charAt(0).toUpperCase() || "?"}</span>
                 )}
               </div>
               <input type="file" accept="image/*" onChange={handleAvatarChange} />
@@ -110,12 +108,8 @@ export default function PersonForm({ onClose, onSaved }: Props) {
           </label>
 
           <label>
-            Tên
-            <input value={firstName} onChange={(e) => setFirstName(e.target.value)} autoFocus />
-          </label>
-          <label>
-            Họ
-            <input value={lastName} onChange={(e) => setLastName(e.target.value)} />
+            Họ Và Tên
+            <input value={fullName} onChange={(e) => setFullName(e.target.value)} autoFocus />
           </label>
           <label>
             Giới tính
