@@ -7,13 +7,16 @@ import type { FamilyChartNode } from "@/lib/familyChartTransform";
 
 // Tạo HTML riêng cho mỗi card trong cây thay vì dùng template mặc định của family-chart
 function buildCardHtml(d: any): string {
-  //console.log("DEBUG d:", d);
+  // TreeDatum của family-chart có thể lồng thêm 1 cấp (d.data.data) tùy version -
+  // dòng dưới thử cả 2 khả năng để chắc chắn lấy đúng object chứa "first name", "gender"...
   const person = d?.data?.data ?? d?.data ?? d ?? {};
+
   const first: string = person["first name"] ?? "";
   const last: string = person["last name"] ?? "";
   const gender: string = person.gender;
   const birthday: string | undefined = person.birthday;
   const death: string | undefined = person["death date"];
+  const avatar: string | undefined = person.avatar;
 
   const initials =
     `${first.charAt(0)}${last.charAt(0)}`.toUpperCase() || "?";
@@ -23,9 +26,13 @@ function buildCardHtml(d: any): string {
 
   const years = birthday ? `${birthday}${death ? " – " + death : " – nay"}` : "";
 
+  const avatarHtml = avatar
+    ? `<img class="fc-card__avatar fc-card__avatar--img" src="${avatar}" alt="${first}" />`
+    : `<div class="fc-card__avatar">${initials}</div>`;
+
   return `
     <div class="fc-card ${genderClass}">
-      <div class="fc-card__avatar">${initials}</div>
+      ${avatarHtml}
       <div class="fc-card__body">
         <div class="fc-card__name">${first} ${last}</div>
         ${years ? `<div class="fc-card__years">${years}</div>` : ""}
@@ -77,11 +84,6 @@ export default function FamilyTree() {
       f3Chart
         .setCardHtml()
         .setCardInnerHtmlCreator(buildCardHtml)
-        .setCardDisplay([
-          ["first name", "last name"],
-          ["birthday"]
-        ])
-        //.setStyle("imageRect")
         .setOnHoverPathToMain();
 
       f3Chart.updateTree({ initial: true });
