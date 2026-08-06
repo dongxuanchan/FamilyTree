@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import db from "@/lib/db";
+import { isAdminRequest } from "@/lib/auth";
 
 interface Params {
   params: { id: string };
@@ -7,6 +8,10 @@ interface Params {
 
 // PUT /api/people/:id -> cập nhật thông tin cá nhân
 export async function PUT(req: NextRequest, { params }: Params) {
+  if (!isAdminRequest(req)) {
+    return NextResponse.json({ error: "Cần đăng nhập admin để thực hiện thao tác này" }, { status: 401 });
+  }
+
   const { id } = params;
   const body = await req.json();
   const existing = db.prepare("SELECT id FROM people WHERE id = ?").get(id);
@@ -34,6 +39,10 @@ export async function PUT(req: NextRequest, { params }: Params) {
 
 // DELETE /api/people/:id -> xóa người (kèm mọi quan hệ liên quan nhờ ON DELETE CASCADE)
 export async function DELETE(_req: NextRequest, { params }: Params) {
+  if (!isAdminRequest(_req)) {
+    return NextResponse.json({ error: "Cần đăng nhập admin để thực hiện thao tác này" }, { status: 401 });
+  }
+
   const { id } = params;
   const result = db.prepare("DELETE FROM people WHERE id = ?").run(id);
   if (result.changes === 0) {

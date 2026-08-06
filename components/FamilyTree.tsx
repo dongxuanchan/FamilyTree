@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import PersonForm from "./PersonForm";
 import RelationshipForm from "./RelationshipForm";
+import LoginForm from "./LoginForm";
 import type { FamilyChartNode } from "@/lib/familyChartTransform";
 
 function getInitials(fullName: string): string {
@@ -53,8 +54,23 @@ export default function FamilyTree() {
   const chartRef = useRef<HTMLDivElement>(null);
   const [showAddPerson, setShowAddPerson] = useState(false);
   const [showAddRel, setShowAddRel] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [people, setPeople] = useState<FamilyChartNode[]>([]);
   const [refreshKey, setRefreshKey] = useState(0);
+
+  // Kiểm tra trạng thái đăng nhập admin ngay khi trang tải
+  useEffect(() => {
+    fetch("/api/auth/me")
+      .then((res) => res.json())
+      .then((data) => setIsAdmin(Boolean(data.isAdmin)))
+      .catch(() => setIsAdmin(false));
+  }, []);
+
+  async function handleLogout() {
+    await fetch("/api/auth/logout", { method: "POST" });
+    setIsAdmin(false);
+  }
 
   const fetchData = useCallback(async () => {
     const res = await fetch("/api/people");
@@ -109,17 +125,28 @@ export default function FamilyTree() {
     <div>
       <div className="toolbar">
         <h1>Cây phả hệ gia đình</h1>
-        <button className="btn" onClick={() => setShowAddPerson(true)}>
-          + Thêm thành viên
-        </button>
-        <button className="btn" onClick={() => setShowAddRel(true)}>
-          + Thêm quan hệ
-        </button>
+        {isAdmin ? (
+          <>
+            <button className="btn" onClick={() => setShowAddPerson(true)}>
+              + Thêm thành viên
+            </button>
+            <button className="btn" onClick={() => setShowAddRel(true)}>
+              + Thêm quan hệ
+            </button>
+            <button className="btn btn-secondary" onClick={handleLogout}>
+              Đăng xuất
+            </button>
+          </>
+        ) : (
+          <button className="btn" onClick={() => setShowLogin(true)}>
+            Đăng nhập admin
+          </button>
+        )}
       </div>
 
       <div className="panel">
         {people.length === 0 && (
-          <p>Chưa có thành viên nào. Bấm &quot;Thêm thành viên&quot; để bắt đầu.</p>
+          <p>Chưa có thành viên nào. {isAdmin ? "Bấm \"Thêm thành viên\" để bắt đầu." : "Đăng nhập admin để bắt đầu thêm thành viên."}</p>
         )}
         <div id="FamilyChart" ref={chartRef} />
       </div>
@@ -141,6 +168,16 @@ export default function FamilyTree() {
           onSaved={() => {
             setShowAddRel(false);
             refresh();
+          }}
+        />
+      )}
+
+      {showLogin && (
+        <LoginForm
+          onClose={() => setShowLogin(false)}
+          onLoggedIn={() => {
+            setShowLogin(false);
+            setIsAdmin(true);
           }}
         />
       )}

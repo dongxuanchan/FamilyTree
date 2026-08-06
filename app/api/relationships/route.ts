@@ -1,11 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import db from "@/lib/db";
+import { isAdminRequest } from "@/lib/auth";
+
 
 // POST /api/relationships
 // body: { person1_id, person2_id, type: "parent" | "spouse" }
 // - type "parent": person1 là cha/mẹ của person2
 // - type "spouse": person1 và person2 là vợ chồng
 export async function POST(req: NextRequest) {
+  if (!isAdminRequest(req)) {
+    return NextResponse.json({ error: "Cần đăng nhập admin để thực hiện thao tác này" }, { status: 401 });
+  }
+
   const body = await req.json();
   const { person1_id, person2_id, type } = body;
 
@@ -30,6 +36,10 @@ export async function POST(req: NextRequest) {
 // DELETE /api/relationships
 // body: { person1_id, person2_id, type }
 export async function DELETE(req: NextRequest) {
+  if (!isAdminRequest(req)) {
+    return NextResponse.json({ error: "Cần đăng nhập admin để thực hiện thao tác này" }, { status: 401 });
+  }
+  
   const body = await req.json();
   const { person1_id, person2_id, type } = body;
 

@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
 import db from "@/lib/db";
 import { getFamilyChartData } from "@/lib/familyChartTransform";
+import { isAdminRequest } from "@/lib/auth";
+
 
 // GET /api/people -> trả về dữ liệu đã transform sẵn cho family-chart
 export async function GET() {
@@ -11,6 +13,10 @@ export async function GET() {
 
 // POST /api/people -> tạo một người mới (chưa có quan hệ)
 export async function POST(req: NextRequest) {
+  if (!isAdminRequest(req)) {
+    return NextResponse.json({ error: "Cần đăng nhập admin để thực hiện thao tác này" }, { status: 401 });
+  }
+  
   const body = await req.json();
   const { full_name, gender, birth_date, death_date, avatar, notes } = body;
 
