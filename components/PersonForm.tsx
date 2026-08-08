@@ -32,10 +32,17 @@ function resizeImageToDataUrl(file: File, maxSize = 200): Promise<string> {
   });
 }
 
+const MONTHS = Array.from({ length: 12 }, (_, i) => i + 1);
+const DAYS = Array.from({ length: 31 }, (_, i) => i + 1);
+
 export default function PersonForm({ onClose, onSaved }: Props) {
   const [fullName, setFullName] = useState("");
   const [gender, setGender] = useState<"M" | "F">("M");
-  const [birthDate, setBirthDate] = useState("");
+  const [birthYear, setBirthYear] = useState("");
+  const [birthMonth, setBirthMonth] = useState("");
+  const [birthDay, setBirthDay] = useState("");
+  const [isAlive, setIsAlive] = useState(true);
+  const [deathYear, setDeathYear] = useState("");
   const [avatar, setAvatar] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -56,12 +63,36 @@ export default function PersonForm({ onClose, onSaved }: Props) {
     }
   }
 
+  // Ghép Năm/Tháng/Ngày thành 1 chuỗi ngày sinh, chỉ thêm phần nào người dùng đã điền.
+  // Ngày chỉ được ghép vào nếu đã có tháng (tránh chuỗi vô nghĩa kiểu "1990--15").
+  function buildBirthDate(): string {
+    if (!birthYear.trim()) return "";
+    let result = "";
+    if (birthMonth) {
+      result += `${birthMonth.padStart(2, "0")}-`;
+      if (birthDay) {
+        result = `${birthDay.padStart(2, "0")}-${result}`;
+      }
+    }
+    result += birthYear.trim();
+    return result;
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!fullName.trim()) {
       setError("Vui lòng nhập tên");
       return;
     }
+    if (!birthYear.trim()) {
+      setError("Vui lòng nhập năm sinh");
+      return;
+    }
+    if (!isAlive && !deathYear.trim()) {
+      setError("Vui lòng nhập năm mất, hoặc tick lại \"Còn sống\" nếu chưa rõ");
+      return;
+    }
+
     setSaving(true);
     setError("");
     try {
@@ -71,7 +102,8 @@ export default function PersonForm({ onClose, onSaved }: Props) {
         body: JSON.stringify({
           full_name: fullName.trim(),
           gender,
-          birth_date: birthDate || null,
+          birth_date: buildBirthDate(),
+          death_date: isAlive ? null : deathYear.trim(),
           avatar
         })
       });
@@ -118,10 +150,71 @@ export default function PersonForm({ onClose, onSaved }: Props) {
               <option value="F">Nữ</option>
             </select>
           </label>
+
           <label>
-            Ngày sinh
-            <input type="date" value={birthDate} onChange={(e) => setBirthDate(e.target.value)} />
+            Ngày sinh <span style={{ color: "#9a9a9a", fontWeight: 400 }}>(chỉ năm là bắt buộc)</span>
+            <div className="date-row">
+              <select className="daymonthyearinput" 
+                value={birthDay}
+                onChange={(e) => setBirthDay(e.target.value)} 
+              >
+                <option value="">Ngày</option>
+                {DAYS.map((m) => (
+                  <option key={m} value={m}>
+                    {m}
+                  </option>
+                ))}
+              </select>
+              -
+              <select className="daymonthyearinput" 
+                value={birthMonth}
+                onChange={(e) => {
+                  setBirthMonth(e.target.value); 
+                }}
+              >
+                <option value="">Tháng</option>
+                {MONTHS.map((m) => (
+                  <option key={m} value={m}>
+                    {m}
+                  </option>
+                ))}
+              </select>
+              -
+              <input className="daymonthyearinput" 
+                type="number"
+                placeholder="Năm *"
+                value={birthYear}
+                onChange={(e) => setBirthYear(e.target.value)}
+                min={1900}
+                max={2050}
+              />
+            </div>
           </label>
+ 
+          <label className="checkbox-row">
+            Còn sống
+            <input className="daymonthyearinput" 
+              type="checkbox"
+              checked={isAlive}
+              onChange={(e) => setIsAlive(e.target.checked)}
+            /> 
+          </label>
+ 
+          {!isAlive && (
+            <label>
+              Năm mất
+              <div className="date-row">
+                <input className="daymonthyearinput" 
+                  type="number"
+                  placeholder="Năm mất"
+                  value={deathYear}
+                  onChange={(e) => setDeathYear(e.target.value)}
+                  min={1900}
+                  max={2050}
+                />
+              </div>
+            </label>
+          )}
 
           {error && <p style={{ color: "crimson", fontSize: 13 }}>{error}</p>}
 

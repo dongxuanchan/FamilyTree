@@ -33,7 +33,7 @@ function buildCardHtml(d: any): string {
   const genderClass =
     gender === "F" ? "fc-card--female" : gender === "M" ? "fc-card--male" : "fc-card--unknown";
 
-  const years = birthday ? `${birthday}${death ? " – " + death : " – nay"}` : "";
+  const years = birthday ? `${birthday}${death ? " – <span>" + death +"</span>" : ""}` : "";
 
   const avatarHtml = avatar
     ? `<img class="fc-card__avatar fc-card__avatar--img" src="${avatar}" alt="${fullname}" />`
