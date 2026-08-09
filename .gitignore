@@ -6,4 +6,3 @@ data/*.db-wal
 .env
 .DS_Store
 .env.local
-dev_note

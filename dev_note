@@ -1,0 +1,15 @@
+#check lại lỗi báo trong FamilyTree.tsx
+#các hàm update dữ liệu đều phải thêm checking isAdminRequest(), có cách nào make global setting for all ?
+#validate all inout data khi nhập mới 1 thành viên
+##
+--ADMIN_PASSWORD_HASH
+node -e "
+const crypto = require('crypto');
+const password = 'mat-khau-cua-ban';
+const salt = crypto.randomBytes(16).toString('hex');
+const hash = crypto.scryptSync(password, salt, 64).toString('hex');
+console.log(salt + ':' + hash);
+"
+--SESSION_SECRET
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+#color cho dynamic theme vẫn chưa được set up đủ

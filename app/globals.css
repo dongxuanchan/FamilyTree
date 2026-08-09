@@ -1,5 +1,109 @@
 @import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap");
 
+/* ==========================================================================
+   THEME VARIABLES
+   Mỗi theme chỉ là 1 bộ giá trị cho cùng 1 danh sách biến. Muốn thêm theme
+   mới: copy nguyên khối [data-theme="..."], đổi tên và đổi giá trị màu -
+   không cần sửa bất kỳ rule CSS nào bên dưới.
+   ========================================================================== */
+
+:root {
+  /* ---- Theme mặc định: Ocean (xanh biển) ---- */
+
+  /* Nền trang (gradient 3 điểm dừng) */
+  --bg-1: #eaf4fa;
+  --bg-2: #d9ecf6;
+  --bg-3: #c3dcee;
+
+  /* Bề mặt: modal, khung cây */
+  --surface: #f5fafd;
+  --surface-card: #ffffff;
+
+  /* Viền */
+  --border: #c7dcea;
+  --border-input: #bcd4e6;
+
+  /* Chữ */
+  --text: #16324a;
+  --text-muted: #5b7a8c;
+
+  /* Màu chủ đạo (toolbar, đường nối cây, viền card) */
+  --primary: #1b4965;
+  --primary-rgb: 27, 73, 101;
+  --primary-light: #2c6e8e;
+  --on-primary: #f5fafd;
+
+  /* Màu nhấn (nút chính, viền phát sáng hover) */
+  --accent: #c79a4b;
+  --accent-rgb: 199, 154, 75;
+  --accent-hover: #d8ac5e;
+  --on-accent: #16324a;
+
+  /* Nút phụ (Hủy, Đăng xuất...) */
+  --secondary-bg: #dceaf4;
+  --secondary-bg-hover: #c9deec;
+
+  /* Trạng thái disabled (vd dropdown ngày khi chưa chọn tháng) */
+  --disabled-bg: #e9f1f7;
+  --disabled-text: #a9c1d2;
+
+  /* Lớp phủ mờ phía sau modal */
+  --overlay-rgb: 10, 30, 44;
+
+  /* Gradient avatar theo giới tính */
+  --avatar-male-1: #3a5a78;
+  --avatar-male-2: #1f3a52;
+  --avatar-female-1: #b4657a;
+  --avatar-female-2: #8a3f52;
+  --avatar-unknown-1: #9a9a9a;
+  --avatar-unknown-2: #6e6e6e;
+}
+
+[data-theme="forest"] {
+  /* ---- Theme cũ: Forest (xanh lá / vàng be) - giữ lại làm theme thứ 2 ---- */
+
+  --bg-1: #f3ecd8;
+  --bg-2: #eae1c6;
+  --bg-3: #ded2a8;
+
+  --surface: #fbf8ee;
+  --surface-card: #ffffff;
+
+  --border: #ddd0a3;
+  --border-input: #d6cba0;
+
+  --text: #1f2b22;
+  --text-muted: #5a6b5f;
+
+  --primary: #24463a;
+  --primary-rgb: 36, 70, 58;
+  --primary-light: #2f5c4c;
+  --on-primary: #fbf8ee;
+
+  --accent: #c79a4b;
+  --accent-rgb: 199, 154, 75;
+  --accent-hover: #d8ac5e;
+  --on-accent: #24463a;
+
+  --secondary-bg: #e7e0c6;
+  --secondary-bg-hover: #ddd4b3;
+
+  --disabled-bg: #f0ece0;
+  --disabled-text: #b8ae90;
+
+  --overlay-rgb: 20, 30, 24;
+
+  --avatar-male-1: #2f6f76;
+  --avatar-male-2: #1f4d52;
+  --avatar-female-1: #b4657a;
+  --avatar-female-2: #8a3f52;
+  --avatar-unknown-1: #9a9a9a;
+  --avatar-unknown-2: #6e6e6e;
+}
+
+/* ==========================================================================
+   CÁC RULE CSS - chỉ tham chiếu var(--...), không còn mã màu viết cứng
+   ========================================================================== */
 * {
   box-sizing: border-box;
 }
@@ -10,8 +114,8 @@ body {
   padding: 0;
   height: 100%;
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background: radial-gradient(circle at top left, #f3ecd8 0%, #eae1c6 55%, #ded2a8 100%);
-  color: #1f2b22;
+  background: radial-gradient(circle at top left, var(--bg-1) 0%, var(--bg-2) 55%, var(--bg-3) 100%);
+  color: var(--text);
 }
 
 #FamilyChart {
@@ -22,17 +126,17 @@ body {
   background:
     repeating-radial-gradient(
       circle at center,
-      rgba(36, 70, 58, 0.05) 0px,
-      rgba(36, 70, 58, 0.05) 1px,
+      rgba(var(--primary-rgb), 0.05) 0px,
+      rgba(var(--primary-rgb), 0.05) 1px,
       transparent 1px,
       transparent 90px
     ),
-    radial-gradient(circle at center, rgba(199, 154, 75, 0.1), transparent 55%),
-    #fbf8ee;
-  border: 1px solid #ddd0a3;
+    radial-gradient(circle at center, rgba(var(--accent-rgb), 0.1), transparent 55%),
+    var(--surface);
+  border: 1px solid var(--border);
   border-radius: 14px;
-  box-shadow: inset 0 1px 3px rgba(36, 70, 58, 0.08);
-  color: #24463a;
+  box-shadow: inset 0 1px 3px rgba(var(--primary-rgb), 0.08);
+  color: var(--primary);
 }
 
 #FamilyChart svg {
@@ -45,7 +149,7 @@ body {
 #FamilyChart svg path,
 #FamilyChart svg line,
 #FamilyChart svg polyline {
-  stroke: #24463a !important;
+  stroke: var(--primary)!important;
   stroke-opacity: 0.55;
   stroke-width: 2px;
 }
@@ -55,9 +159,9 @@ body {
   gap: 12px;
   align-items: center;
   padding: 18px 24px;
-  border-bottom: 3px solid #24463a;
-  background: linear-gradient(135deg, #24463a 0%, #2f5c4c 100%);
-  color: #fbf8ee;
+  border-bottom: 3px solid var(--primary);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  color: var(--on-primary);
 }
 
 .toolbar h1 {
@@ -71,8 +175,8 @@ body {
 
 .btn {
   padding: 9px 16px;
-  background: #c79a4b;
-  color: #24463a;
+  background: var(--accent);
+  color: var(--on-accent);
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -82,7 +186,7 @@ body {
 }
 
 .btn:hover {
-  background: #d8ac5e;
+  background: var(--accent-hover);
   transform: translateY(-1px);
 }
 
@@ -93,7 +197,7 @@ body {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(20, 30, 24, 0.5);
+  background: rgba(var(--overlay-rgb), 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -101,12 +205,12 @@ body {
 }
 
 .modal {
-  background: #fbf8ee;
+  background: var(--surface);
   padding: 26px;
   border-radius: 14px;
   width: 360px;
   max-width: 90vw;
-  box-shadow: 0 20px 50px rgba(20, 30, 24, 0.25);
+  box-shadow: 0 20px 50px rgba(var(--overlay-rgb), 0.25);
 }
 
 .modal h3 {
@@ -118,7 +222,7 @@ body {
   display: block;
   margin-top: 10px;
   font-size: 13px;
-  color: #5a6b5f;
+  color: var(--text-muted);
   font-weight: 500;
 }
 
@@ -127,7 +231,7 @@ body {
   width: 100%;
   padding: 9px 10px;
   margin-top: 4px;
-  border: 1px solid #d6cba0;
+  border: 1px solid var(--border-input);
   border-radius: 8px;
   font-family: inherit;
   font-size: 14px;
@@ -140,13 +244,45 @@ body {
   gap: 8px;
 }
 
+.date-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.date-row input,
+.date-row select {
+  margin-top: 0;
+  min-width: 0;
+}
+
+.date-row select:disabled {
+  background: var(--disabled-bg);
+  color: var(--disabled-text);
+  cursor: not-allowed;
+}
+
+.checkbox-row {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  cursor: pointer;
+}
+
+.checkbox-row input[type="checkbox"] {
+  width: auto;
+  margin-top: 0;
+  accent-color: var(--primary);
+}
+
 .btn-secondary {
-  background: #e7e0c6;
-  color: #24463a;
+  background: var(--secondary-bg);
+  color: var(--text);
 }
 
 .btn-secondary:hover {
-  background: #ddd4b3;
+  background: var(--secondary-bg-hover);
 }
 
 /* ---------- Card trong cây (family-chart) ---------- */
@@ -158,9 +294,9 @@ body {
   width: 150px;
   padding: 10px 0px 10px;
   border-radius: 12px;
-  background: #ffffff;
-  border: 1px solid rgba(36, 70, 58, 0.12);
-  box-shadow: 0 4px 10px rgba(36, 70, 58, 0.1);
+  background: var(--surface-card);
+  border: 1px solid rgba(var(--primary-rgb), 0.12);
+  box-shadow: 0 4px 10px rgba(var(--primary-rgb), 0.1);
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   font-family: "Inter", sans-serif;
@@ -170,7 +306,7 @@ body {
 
 .fc-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 10px 20px rgba(36, 70, 58, 0.18);
+  box-shadow: 0 10px 20px rgba(var(--primary-rgb), 0.18);
 }
 
 .fc-card__avatar {
@@ -197,19 +333,19 @@ body {
 .fc-card:hover .fc-card__avatar {
   box-shadow:
     inset 0 0 0 2px rgba(255, 255, 255, 0.6),
-    0 0 0 4px rgba(199, 154, 75, 0.35);
+    0 0 0 4px rgba(var(--accent-rgb), 0.35);
 }
 
 .fc-card--male .fc-card__avatar {
-  background: linear-gradient(135deg, #2f6f76, #1f4d52);
+  background: linear-gradient(135deg, var(--avatar-male-1), var(--avatar-male-2));
 }
 
 .fc-card--female .fc-card__avatar {
-  background: linear-gradient(135deg, #b4657a, #8a3f52);
+  background: linear-gradient(135deg, var(--avatar-female-1), var(--avatar-female-2));
 }
 
 .fc-card--unknown .fc-card__avatar {
-  background: linear-gradient(135deg, #9a9a9a, #6e6e6e);
+  background: linear-gradient(135deg, var(--avatar-unknown-1), var(--avatar-unknown-2));
 }
 
 .fc-card__body {
@@ -220,7 +356,7 @@ body {
 .fc-card__name {
   font-weight: 600;
   font-size: 14px;
-  color: #1f2b22;
+  color: var(--text);
   /*white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;*/
@@ -231,7 +367,7 @@ body {
 
 .fc-card__years {
   font-size: 12px;
-  color: #7a8a7d;
+  color: var(--text-muted);
   margin-top: 2px;
 }
 
@@ -262,12 +398,12 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #2f6f76, #1f4d52);
+  background: linear-gradient(135deg, var(--avatar-male-1), var(--avatar-male-2));
   color: #fff;
   font-family: "Fraunces", serif;
   font-weight: 700;
   font-size: 20px;
-  box-shadow: 0 0 0 3px rgba(199, 154, 75, 0.3);
+  box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.3);
 }
 
 .avatar-upload__preview img {
