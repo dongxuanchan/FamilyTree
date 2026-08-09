@@ -59,7 +59,7 @@
   --avatar-unknown-2: #6e6e6e;
 
   /* horizontal card layout*/  
-  --fc-card-width: 220px;
+  --fc-card-width: 210px;
   --fc-card-padding: 10px 14px;
   --fc-card-male-flex-direction: row-reverse; 
   --fc-card-male-text-align: right;
