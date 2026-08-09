@@ -8,7 +8,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="vi" //data-theme="forest"
+    <html lang="vi" 
+    //data-theme="forest"
+    //card-layout="vertical"
     >   
       <body>{children}</body>
     </html>
