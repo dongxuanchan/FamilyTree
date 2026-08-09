@@ -37,6 +37,9 @@ body {
 
 #FamilyChart svg {
   overflow: visible;
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
 }
 
 #FamilyChart svg path,
@@ -152,8 +155,8 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
-  width: 220px;
-  padding: 10px 14px;
+  width: 150px;
+  padding: 10px 0px 10px;
   border-radius: 12px;
   background: #ffffff;
   border: 1px solid rgba(36, 70, 58, 0.12);
@@ -161,6 +164,8 @@ body {
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   font-family: "Inter", sans-serif;
+  flex-direction: column; 
+  text-align: center;
 }
 
 .fc-card:hover {
@@ -170,8 +175,8 @@ body {
 
 .fc-card__avatar {
   flex-shrink: 0;
-  width: 42px;
-  height: 42px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -209,15 +214,19 @@ body {
 
 .fc-card__body {
   min-width: 0;
+  width: 100%;
 }
 
 .fc-card__name {
   font-weight: 600;
   font-size: 14px;
   color: #1f2b22;
-  white-space: nowrap;
+  /*white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
+  text-overflow: ellipsis;*/
+  white-space: normal; 
+  overflow-wrap: break-word; 
+  line-height: 1.25;
 }
 
 .fc-card__years {

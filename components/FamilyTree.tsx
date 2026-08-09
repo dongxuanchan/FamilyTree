@@ -99,8 +99,8 @@ export default function FamilyTree() {
       const f3Chart = f3
         .createChart(chartRef.current, data)
         .setTransitionTime(600)
-        .setCardXSpacing(250)
-        .setCardYSpacing(150)
+        .setCardXSpacing(210)
+        .setCardYSpacing(230)
         .setOrientationVertical()
         // Tắt card rỗng tự động thêm cho người chỉ có 1 cha/mẹ (con riêng)
         .setSingleParentEmptyCard(false);
