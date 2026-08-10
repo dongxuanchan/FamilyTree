@@ -28,6 +28,10 @@ db.exec(`
     death_date TEXT,
     avatar TEXT,
     notes TEXT,
+    phone TEXT,
+    facebook TEXT,
+    occupation TEXT,
+    address TEXT,
     created_at TEXT DEFAULT (datetime('now'))
   );
 

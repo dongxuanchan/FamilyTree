@@ -8,6 +8,10 @@ export interface PersonRow {
   death_date: string | null;
   avatar: string | null;
   notes: string | null;
+  phone: string | null;
+  facebook: string | null;
+  occupation: string | null;
+  address: string | null;
 }
 
 interface RelRow {
@@ -72,4 +76,9 @@ export function getFamilyChartData(): FamilyChartNode[] {
   }
 
   return Array.from(nodes.values());
+}
+
+// Lấy đầy đủ thông tin thô (không transform) của 1 người, dùng cho trang chi tiết
+export function getPersonById(id: string): PersonRow | undefined {
+  return db.prepare("SELECT * FROM people WHERE id = ?").get(id) as PersonRow | undefined;
 }

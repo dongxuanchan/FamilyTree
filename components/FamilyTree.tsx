@@ -1,26 +1,20 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import PersonForm from "./PersonForm";
 import RelationshipForm from "./RelationshipForm";
 import LoginForm from "./LoginForm";
 import type { FamilyChartNode } from "@/lib/familyChartTransform";
-
-function getInitials(fullName: string): string {
-  if (!fullName) return "";
-
-  return fullName
-    .trim() // Loại bỏ khoảng trắng ở hai đầu
-    .split(/\s+/) // Tách chuỗi thành mảng các từ, xử lý cả trường hợp có nhiều khoảng trắng liên tiếp
-    .map(word => word.charAt(0).toUpperCase()) // Lấy ký tự đầu tiên và viết hoa
-    .join(''); // Ghép các ký tự lại thành một chuỗi duy nhất
-}
+import { getInitials } from "@/lib/utils";
 
 // Tạo HTML riêng cho mỗi card trong cây thay vì dùng template mặc định của family-chart
 function buildCardHtml(d: any): string {
   // TreeDatum của family-chart có thể lồng thêm 1 cấp (d.data.data) tùy version -
   // dòng dưới thử cả 2 khả năng để chắc chắn lấy đúng object chứa "first name", "gender"...
+  //console.log('d: ', d);
   const person = d?.data?.data ?? d?.data ?? d ?? {};
+  const nodeId: string = d?.data?.id ?? d?.id ?? "";
 
   const fullname: string = person["full name"] ?? "";
   const gender: string = person.gender;
@@ -41,6 +35,7 @@ function buildCardHtml(d: any): string {
 
   return `
     <div class="fc-card ${genderClass}">
+      <button class="fc-card__detail-btn" data-view-detail="${nodeId}" title="Xem chi tiết" type="button">ⓘ</button>
       ${avatarHtml}
       <div class="fc-card__body">
         <div class="fc-card__name">${fullname}</div>
@@ -62,12 +57,37 @@ function readCssNumberVar(name: string, fallback: number): number {
 
 export default function FamilyTree() {
   const chartRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
   const [showAddPerson, setShowAddPerson] = useState(false);
   const [showAddRel, setShowAddRel] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [people, setPeople] = useState<FamilyChartNode[]>([]);
   const [refreshKey, setRefreshKey] = useState(0);
+
+  // Lắng nghe click vào nút "xem chi tiết" trên card bằng event delegation, gắn 1 LẦN
+  // DUY NHẤT lúc mount (không đặt trong effect vẽ cây bên dưới) - vì effect vẽ cây chạy
+  // lại mỗi khi refreshKey đổi và chỉ innerHTML="" nội dung BÊN TRONG chartRef.current,
+  // bản thân div chartRef.current không bị hủy -> nếu gắn listener trong đó, mỗi lần vẽ
+  // lại sẽ cộng dồn thêm 1 listener mới, khiến click bị xử lý nhiều lần.
+  useEffect(() => {
+    const container = chartRef.current;
+    if (!container) return;
+
+    function handleClick(e: MouseEvent) {
+      const target = (e.target as HTMLElement).closest<HTMLElement>("[data-view-detail]");
+      if (!target) return;
+      // Chặn không cho sự kiện lan lên card cha - tránh kích hoạt hành vi
+      // "click để canh giữa cây" mặc định của family-chart trên cùng 1 click
+      e.stopPropagation();
+      e.preventDefault();
+      const id = target.getAttribute("data-view-detail");
+      if (id) router.push(`/people/${id}`);
+    }
+
+    container.addEventListener("click", handleClick);
+    return () => container.removeEventListener("click", handleClick);
+  }, [router]);
 
   // Kiểm tra trạng thái đăng nhập admin ngay khi trang tải
   useEffect(() => {

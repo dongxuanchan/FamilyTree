@@ -246,6 +246,8 @@ body {
   width: 360px;
   max-width: 90vw;
   box-shadow: 0 20px 50px rgba(var(--overlay-rgb), 0.25);
+  max-height: 85vh;
+  overflow-y: auto;
 }
 
 .modal h3 {
@@ -344,6 +346,32 @@ body {
 .fc-card--female {
   flex-direction: var(--fc-card-female-flex-direction);
   text-align: var(--fc-card-female-text-align);
+}
+
+.fc-card__detail-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(var(--primary-rgb), 0.08);
+  color: var(--primary);
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.fc-card__detail-btn:hover {
+  background: var(--accent);
+  color: var(--on-accent);
+  transform: scale(1.15);
 }
 
 .fc-card:hover {
@@ -456,4 +484,95 @@ body {
 .avatar-upload input[type="file"] {
   font-size: 12px;
   /*width: auto;*/
+}
+
+/* ---------- Trang chi tiết thành viên (app/people/[id]/page.tsx) ---------- */
+
+.detail-card {
+  max-width: 480px;
+  margin: 0 auto;
+  background: var(--surface-card);
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  padding: 32px 28px;
+  text-align: center;
+  box-shadow: 0 4px 16px rgba(var(--primary-rgb), 0.1);
+}
+
+.detail-avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Fraunces", serif;
+  font-weight: 700;
+  font-size: 30px;
+  color: #fff;
+}
+
+.detail-avatar--placeholder.fc-card--male {
+  background: linear-gradient(135deg, var(--avatar-male-1), var(--avatar-male-2));
+}
+
+.detail-avatar--placeholder.fc-card--female {
+  background: linear-gradient(135deg, var(--avatar-female-1), var(--avatar-female-2));
+}
+
+.detail-avatar--placeholder.fc-card--unknown {
+  background: linear-gradient(135deg, var(--avatar-unknown-1), var(--avatar-unknown-2));
+}
+
+.detail-name {
+  font-family: "Fraunces", serif;
+  font-size: 24px;
+  margin: 0 0 4px;
+  color: var(--text);
+}
+
+.detail-subtitle {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin: 0 0 24px;
+}
+
+.detail-fields {
+  text-align: left;
+  border-top: 1px solid var(--border);
+  margin: 0;
+}
+
+.detail-field {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.detail-field dt {
+  color: var(--text-muted);
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.detail-field dd {
+  margin: 0;
+  color: var(--text);
+  font-size: 14px;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.detail-field dd a {
+  color: var(--primary);
+}
+
+.detail-empty {
+  color: var(--text-muted);
+  font-size: 14px;
+  font-style: italic;
 }

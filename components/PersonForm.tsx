@@ -44,6 +44,10 @@ export default function PersonForm({ onClose, onSaved }: Props) {
   const [isAlive, setIsAlive] = useState(true);
   const [deathYear, setDeathYear] = useState("");
   const [avatar, setAvatar] = useState<string | null>(null);
+  const [phone, setPhone] = useState("");
+  const [facebook, setFacebook] = useState("");
+  const [occupation, setOccupation] = useState("");
+  const [address, setAddress] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -104,7 +108,11 @@ export default function PersonForm({ onClose, onSaved }: Props) {
           gender,
           birth_date: buildBirthDate(),
           death_date: isAlive ? null : deathYear.trim(),
-          avatar
+          avatar,
+          phone: phone.trim() || null,
+          facebook: facebook.trim() || null,
+          occupation: occupation.trim() || null,
+          address: address.trim() || null
         })
       });
       if (!res.ok) {
@@ -215,6 +223,33 @@ export default function PersonForm({ onClose, onSaved }: Props) {
               </div>
             </label>
           )}
+
+          <label>
+            Nghề nghiệp
+            <input value={occupation} onChange={(e) => setOccupation(e.target.value)} />
+          </label>
+          <label>
+            Số điện thoại
+            <input
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="09xxxxxxxx"
+            />
+          </label>
+          <label>
+            Link Facebook
+            <input
+              type="url"
+              value={facebook}
+              onChange={(e) => setFacebook(e.target.value)}
+              placeholder="https://facebook.com/..."
+            />
+          </label>
+          <label>
+            Nơi ở hiện tại
+            <input value={address} onChange={(e) => setAddress(e.target.value)} />
+          </label>
 
           {error && <p style={{ color: "crimson", fontSize: 13 }}>{error}</p>}
 

@@ -18,7 +18,18 @@ export async function POST(req: NextRequest) {
   }
   
   const body = await req.json();
-  const { full_name, gender, birth_date, death_date, avatar, notes } = body;
+  const {
+    full_name,
+    gender,
+    birth_date,
+    death_date,
+    avatar,
+    notes,
+    phone,
+    facebook,
+    occupation,
+    address
+  } = body;
 
   if (!full_name || !gender) {
     return NextResponse.json(
@@ -29,9 +40,21 @@ export async function POST(req: NextRequest) {
 
   const id = uuidv4();
   db.prepare(
-    `INSERT INTO people (id, full_name, gender, birth_date, death_date, avatar, notes)
-     VALUES (?, ?, ?, ?, ?, ?, ?)`
-  ).run(id, full_name, gender, birth_date ?? null, death_date ?? null, avatar ?? null, notes ?? null);
+    `INSERT INTO people (id, full_name, gender, birth_date, death_date, avatar, notes, phone, facebook, occupation, address)
+     VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+  ).run(
+    id,
+    full_name,
+    gender,
+    birth_date ?? null,
+    death_date ?? null,
+    avatar ?? null,
+    notes ?? null,
+    phone ?? null,
+    facebook ?? null,
+    occupation ?? null,
+    address ?? null
+  );
 
   return NextResponse.json({ id }, { status: 201 });
 }
