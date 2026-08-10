@@ -50,6 +50,16 @@ function buildCardHtml(d: any): string {
   `;
 }
 
+// Đọc 1 biến CSS số (không đơn vị, vd "--card-x-spacing: 210;") từ layout đang bật
+// (data-layout trên <html>) - để JS luôn khớp với layout hiện tại thay vì số viết cứng
+// không đồng bộ mỗi khi đổi layout qua CSS.
+function readCssNumberVar(name: string, fallback: number): number {
+  if (typeof window === "undefined") return fallback;
+  const raw = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  const parsed = parseFloat(raw);
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+
 export default function FamilyTree() {
   const chartRef = useRef<HTMLDivElement>(null);
   const [showAddPerson, setShowAddPerson] = useState(false);
@@ -96,11 +106,16 @@ export default function FamilyTree() {
       const f3 = (await import("family-chart")).default;
       await import("family-chart/styles/family-chart.css");
 
+      // Đọc khoảng cách từ CSS của layout đang bật (data-layout trên <html>) thay vì
+      // số viết cứng - đảm bảo tự đồng bộ mỗi khi đổi layout, không cần sửa file này
+      const xSpacing = readCssNumberVar("--card-x-spacing", 210);
+      const ySpacing = readCssNumberVar("--card-y-spacing", 230);
+
       const f3Chart = f3
         .createChart(chartRef.current, data)
         .setTransitionTime(600)
-        .setCardXSpacing(250)
-        .setCardYSpacing(150)
+        .setCardXSpacing(xSpacing)
+        .setCardYSpacing(ySpacing)
         .setOrientationVertical()
         // Tắt card rỗng tự động thêm cho người chỉ có 1 cha/mẹ (con riêng)
         .setSingleParentEmptyCard(false);

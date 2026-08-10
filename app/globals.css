@@ -71,6 +71,8 @@
   --fc-card-name-text-overflow: ellipsis;
   --fc-card-name-overflow-wrap: unset; 
   --fc-card-name-line-height: unset;
+  --card-x-spacing: 250px;
+  --card-y-spacing: 150px;
 }
 
 [data-theme="forest"] {
@@ -129,6 +131,8 @@
   --fc-card-name-text-overflow: unset; 
   --fc-card-name-overflow-wrap: break-word; 
   --fc-card-name-line-height: 1.25;
+  --card-x-spacing: 210px;
+  --card-y-spacing: 230px;
 
 }
 
