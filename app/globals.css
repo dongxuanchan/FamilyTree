@@ -322,6 +322,16 @@ body {
   background: var(--secondary-bg-hover);
 }
 
+.btn-danger {
+  background: #c85c5c;
+  color: #fff;
+}
+
+.btn-danger:hover {
+  background: #b34848;
+}
+
+
 /* ---------- Card trong cây (family-chart) ---------- */
 
 .fc-card {
@@ -575,4 +585,13 @@ body {
   color: var(--text-muted);
   font-size: 14px;
   font-style: italic;
+}
+
+.detail-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 24px;
+  padding-top: 20px;
+  /*border-top: 1px solid var(--border);*/
 }

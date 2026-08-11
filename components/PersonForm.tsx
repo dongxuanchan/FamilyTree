@@ -1,10 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import type { PersonRow } from "@/lib/familyChartTransform";
 
 interface Props {
   onClose: () => void;
   onSaved: () => void;
+  // Có personId -> form chuyển sang chế độ SỬA (gọi PUT thay vì POST, điền sẵn dữ liệu cũ)
+  personId?: string;
+  initialData?: PersonRow;
 }
 
 // Đọc file ảnh, resize xuống tối đa 200x200px rồi trả về chuỗi base64 (data URL).
@@ -35,19 +39,47 @@ function resizeImageToDataUrl(file: File, maxSize = 200): Promise<string> {
 const MONTHS = Array.from({ length: 12 }, (_, i) => i + 1);
 const DAYS = Array.from({ length: 31 }, (_, i) => i + 1);
 
-export default function PersonForm({ onClose, onSaved }: Props) {
-  const [fullName, setFullName] = useState("");
-  const [gender, setGender] = useState<"M" | "F">("M");
-  const [birthYear, setBirthYear] = useState("");
-  const [birthMonth, setBirthMonth] = useState("");
-  const [birthDay, setBirthDay] = useState("");
-  const [isAlive, setIsAlive] = useState(true);
-  const [deathYear, setDeathYear] = useState("");
-  const [avatar, setAvatar] = useState<string | null>(null);
-  const [phone, setPhone] = useState("");
-  const [facebook, setFacebook] = useState("");
-  const [occupation, setOccupation] = useState("");
-  const [address, setAddress] = useState("");
+// Chiều ngược lại của buildBirthDate() bên dưới: tách chuỗi đã lưu dd-mm-yyyy ngược trở lại thành 3 phần Năm/Tháng/Ngày để điền sẵn
+// vào form sửa. Number()->String() để bỏ số 0 đệm ("03" -> "3"), khớp value của <option>.
+function parseBirthDate(birthDate: string | null | undefined) {
+  //console.log('birthDate: ',birthDate);
+  if (!birthDate) return { year: "", month: "", day: "" };
+
+  let day, month, year;
+  switch (birthDate.length) {
+    case 4:
+      year = birthDate;
+      break;       
+    case 7:
+      [month, year] = birthDate.split("-");
+      break; 
+    default:
+      [day, month, year] = birthDate.split("-");
+  }
+  
+  return {
+    year: year ?? "",
+    month: month ? String(Number(month)) : "",
+    day: day ? String(Number(day)) : ""
+  };
+}
+
+export default function PersonForm({ onClose, onSaved, personId, initialData }: Props) {
+  const isEditMode = Boolean(personId);
+  const parsedBirth = parseBirthDate(initialData?.birth_date);
+
+  const [fullName, setFullName] = useState(initialData?.full_name ?? "");
+  const [gender, setGender] = useState<"M" | "F">(initialData?.gender ?? "M");
+  const [birthYear, setBirthYear] = useState(parsedBirth.year);
+  const [birthMonth, setBirthMonth] = useState(parsedBirth.month);
+  const [birthDay, setBirthDay] = useState(parsedBirth.day);
+  const [isAlive, setIsAlive] = useState(!initialData?.death_date);
+  const [deathYear, setDeathYear] = useState(initialData?.death_date ?? "");
+  const [avatar, setAvatar] = useState<string | null>(initialData?.avatar ?? null);
+  const [phone, setPhone] = useState(initialData?.phone ?? "");
+  const [facebook, setFacebook] = useState(initialData?.facebook ?? "");
+  const [occupation, setOccupation] = useState(initialData?.occupation ?? "");
+  const [address, setAddress] = useState(initialData?.address ?? "");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -100,8 +132,11 @@ export default function PersonForm({ onClose, onSaved }: Props) {
     setSaving(true);
     setError("");
     try {
-      const res = await fetch("/api/people", {
-        method: "POST",
+      const url = isEditMode ? `/api/people/${personId}` : "/api/people";
+      const method = isEditMode ? "PUT" : "POST";
+
+      const res = await fetch(url, {
+        method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           full_name: fullName.trim(),
@@ -130,7 +165,7 @@ export default function PersonForm({ onClose, onSaved }: Props) {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
-        <h3>Thêm thành viên mới</h3>
+        <h3>{isEditMode ? "Sửa thông tin thành viên" : "Thêm thành viên mới"}</h3>
         <form onSubmit={handleSubmit}>
           <label>
             Ảnh đại diện
@@ -258,7 +293,7 @@ export default function PersonForm({ onClose, onSaved }: Props) {
               Hủy
             </button>
             <button type="submit" className="btn" disabled={saving}>
-              {saving ? "Đang lưu..." : "Lưu"}
+              {saving ? "Đang lưu..." : isEditMode ? "Lưu thay đổi" : "Lưu"}
             </button>
           </div>
         </form>

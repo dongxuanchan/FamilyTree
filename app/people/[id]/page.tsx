@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { cookies } from "next/headers";
 import { getPersonById } from "@/lib/familyChartTransform";
 import { getInitials } from "@/lib/utils";
+import { verifySessionToken, SESSION_COOKIE_NAME } from "@/lib/auth";
+import PersonDetailActions from "@/components/PersonDetailActions";
 
 interface PageProps {
   params: { id: string };
@@ -13,6 +16,12 @@ export default function PersonDetailPage({ params }: PageProps) {
   if (!person) {
     notFound();
   }
+
+  // page.tsx là Server Component nên đọc cookie trực tiếp qua next/headers,
+  // không cần gọi fetch("/api/auth/me") như FamilyTree.tsx (Client Component) đã làm
+  const token = cookies().get(SESSION_COOKIE_NAME)?.value;
+  const isAdmin = verifySessionToken(token);
+  //console.log('isAdmin: ', isAdmin);
 
   const fullName = `${person.full_name}`.trim();
   const initials = getInitials(`${fullName}`);
@@ -79,6 +88,8 @@ export default function PersonDetailPage({ params }: PageProps) {
           ) : (
             <p className="detail-empty">Chưa có thêm thông tin nào khác.</p>
           )}
+
+          {isAdmin && <PersonDetailActions person={person} />}
         </div>
       </div>
     </div>

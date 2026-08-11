@@ -13,3 +13,6 @@ console.log(salt + ':' + hash);
 --SESSION_SECRET
 node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 #color cho dynamic theme vẫn chưa được set up đủ
+
+###BUGs
+-trang chi tiết ko tự động ẩn hiện các nút thêm/xóa khi User Đăng nhập/đăng xuất
