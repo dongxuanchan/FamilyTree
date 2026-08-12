@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
-  checkUsername,
-  verifyPassword,
+  checkUserAndPass,
   createSessionToken,
   SESSION_COOKIE_NAME,
   SESSION_MAX_AGE
@@ -11,11 +10,11 @@ export async function POST(req: NextRequest) {
   const body = await req.json();
   const { username, password } = body;
 
-  if (!username || !password || !checkUsername(username) || !verifyPassword(password)) {
+  if (!username || !password || !checkUserAndPass(username, password)) {
     return NextResponse.json({ error: "Sai tên đăng nhập hoặc mật khẩu" }, { status: 401 });
   }
 
-  const token = createSessionToken();
+  const token = createSessionToken(username);
   const res = NextResponse.json({ success: true });
   res.cookies.set(SESSION_COOKIE_NAME, token, {
     httpOnly: true, // JS phía client không đọc được cookie này -> chống XSS đánh cắp session

@@ -4,7 +4,7 @@ import { useState } from "react";
 
 interface Props {
   onClose: () => void;
-  onLoggedIn: () => void;
+  onLoggedIn: (username: string) => void;
 }
 
 export default function LoginForm({ onClose, onLoggedIn }: Props) {
@@ -27,7 +27,7 @@ export default function LoginForm({ onClose, onLoggedIn }: Props) {
         const data = await res.json();
         throw new Error(data.error ?? "Đăng nhập thất bại");
       }
-      onLoggedIn();
+      onLoggedIn(username);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Đã có lỗi xảy ra");
     } finally {

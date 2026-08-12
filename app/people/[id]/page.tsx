@@ -20,7 +20,7 @@ export default function PersonDetailPage({ params }: PageProps) {
   // page.tsx là Server Component nên đọc cookie trực tiếp qua next/headers,
   // không cần gọi fetch("/api/auth/me") như FamilyTree.tsx (Client Component) đã làm
   const token = cookies().get(SESSION_COOKIE_NAME)?.value;
-  const isAdmin = verifySessionToken(token);
+  const isAdmin = verifySessionToken(token) === 1;
   //console.log('isAdmin: ', isAdmin);
 
   const fullName = `${person.full_name}`.trim();

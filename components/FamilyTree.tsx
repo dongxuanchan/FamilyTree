@@ -61,7 +61,10 @@ export default function FamilyTree() {
   const [showAddPerson, setShowAddPerson] = useState(false);
   const [showAddRel, setShowAddRel] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
+  const [showExportData, setShowExportData] = useState(false);
+  const [showImportData, setShowImportData] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [people, setPeople] = useState<FamilyChartNode[]>([]);
   const [refreshKey, setRefreshKey] = useState(0);
 
@@ -93,13 +96,21 @@ export default function FamilyTree() {
   useEffect(() => {
     fetch("/api/auth/me")
       .then((res) => res.json())
-      .then((data) => setIsAdmin(Boolean(data.isAdmin)))
-      .catch(() => setIsAdmin(false));
+      .then((data) => {
+        setIsAdmin(Boolean(data.isAdmin));
+        setIsSuperAdmin(Boolean(data.isSuperAdmin));
+      })
+      .catch(() => {
+        setIsAdmin(false);
+        setIsSuperAdmin(false);
+      });
   }, []);
 
   async function handleLogout() {
     await fetch("/api/auth/logout", { method: "POST" });
     setIsAdmin(false);
+    setIsSuperAdmin(false);
+    //refresh();
   }
 
   const fetchData = useCallback(async () => {
@@ -160,7 +171,8 @@ export default function FamilyTree() {
     <div>
       <div className="toolbar">
         <h1>Cây phả hệ gia đình</h1>
-        {isAdmin ? (
+        {(isAdmin || isSuperAdmin) ? (
+          isAdmin ? (
           <>
             <button className="btn" onClick={() => setShowAddPerson(true)}>
               + Thêm thành viên
@@ -172,6 +184,19 @@ export default function FamilyTree() {
               Đăng xuất
             </button>
           </>
+          ) : (
+          <>
+            <button className="btn" onClick={() => setShowExportData(true)}>
+              Xuất dữ liệu
+            </button>
+            <button className="btn" onClick={() => setShowImportData(true)}>
+              Nạp dữ liệu
+            </button>
+            <button className="btn btn-secondary" onClick={handleLogout}>
+              Đăng xuất
+            </button>
+          </>
+          ) 
         ) : (
           <button className="btn" onClick={() => setShowLogin(true)}>
             Đăng nhập admin
@@ -210,9 +235,11 @@ export default function FamilyTree() {
       {showLogin && (
         <LoginForm
           onClose={() => setShowLogin(false)}
-          onLoggedIn={() => {
+          onLoggedIn={(username: string) => {
             setShowLogin(false);
-            setIsAdmin(true);
+            if(username==='admin') setIsAdmin(true);
+            if(username==='superadmin') setIsSuperAdmin(true);
+            //refresh();
           }}
         />
       )}

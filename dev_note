@@ -16,3 +16,7 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 
 ###BUGs
 -trang chi tiết ko tự động ẩn hiện các nút thêm/xóa khi User Đăng nhập/đăng xuất
+-tại sao GET http://localhost:3000/api/people và http://localhost:3000/api/auth/me
+luôn được gọi 2 lần khi load trang FamilyTree ?
+-secure: process.env.NODE_ENV === "production" ???
+-tại sao biến trong các hàm luôn khai báo là const thay vì let ?

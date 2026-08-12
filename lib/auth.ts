@@ -6,6 +6,8 @@ export const SESSION_MAX_AGE = 60 * 60 * 24 ; // 1 ngày (tính bằng giây)
 
 const ADMIN_USERNAME = process.env.ADMIN_USERNAME ?? "";
 const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH ?? ""; // định dạng "salt:hash" (hex)
+const SUPER_ADMIN_USERNAME = process.env.SUPER_ADMIN_USERNAME ?? "";
+const SUPER_ADMIN_PASSWORD_HASH = process.env.SUPER_ADMIN_PASSWORD_HASH ?? ""; // định dạng "salt:hash" (hex)
 const SESSION_SECRET = process.env.SESSION_SECRET ?? "";
 
 if (process.env.NODE_ENV !== "production") {
@@ -18,12 +20,15 @@ if (process.env.NODE_ENV !== "production") {
   }
 }
 
-export function checkUsername(username: string): boolean {
-  return username === ADMIN_USERNAME && ADMIN_USERNAME.length > 0;
-}
-
-export function verifyPassword(password: string): boolean {
-  const [salt, storedHash] = ADMIN_PASSWORD_HASH.split(":");
+export function checkUserAndPass(username: string, password: string): boolean {
+  if (username.length === 0) return false;
+  if (username !== ADMIN_USERNAME && username !== SUPER_ADMIN_USERNAME) return false;
+  let salt, storedHash;
+  if(username === ADMIN_USERNAME){
+    [salt, storedHash] = ADMIN_PASSWORD_HASH.split(":");
+  }else {
+    [salt, storedHash] = SUPER_ADMIN_PASSWORD_HASH.split(":");
+  }
   if (!salt || !storedHash) return false;
 
   const hash = crypto.scryptSync(password, salt, 64).toString("hex");
@@ -36,17 +41,21 @@ export function verifyPassword(password: string): boolean {
 }
 
 // Token dạng: "admin.<thời điểm hết hạn>.<chữ ký HMAC>"
-export function createSessionToken(): string {
+export function createSessionToken(role: string): string {
   const expiresAt = Date.now() + SESSION_MAX_AGE * 1000;
-  const payload = `admin.${expiresAt}`;
+  const payload = `${role}.${expiresAt}`;
   const signature = crypto.createHmac("sha256", SESSION_SECRET).update(payload).digest("hex");
   return `${payload}.${signature}`;
 }
 
-export function verifySessionToken(token: string | undefined | null): boolean {
-  if (!token) return false;
+//return
+//1: admin
+//2: superadmin
+//0: not validated
+export function verifySessionToken(token: string | undefined | null): number {
+  if (!token) return 0;
   const parts = token.split(".");
-  if (parts.length !== 3) return false;
+  if (parts.length !== 3) return 0;
 
   const [role, expiresAtStr, signature] = parts;
   const payload = `${role}.${expiresAtStr}`;
@@ -54,16 +63,23 @@ export function verifySessionToken(token: string | undefined | null): boolean {
 
   const a = Buffer.from(signature, "hex");
   const b = Buffer.from(expectedSignature, "hex");
-  if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) return false;
-
-  if (role !== "admin") return false;
+  if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) return 0;
 
   const expiresAt = Number(expiresAtStr);
-  return Number.isFinite(expiresAt) && Date.now() < expiresAt;
+  if(Number.isFinite(expiresAt) && Date.now() >= expiresAt) return 0;
+
+  if (role === "admin") return 1;
+  if (role === "superadmin") return 2;
+  return 0;
 }
 
 // Dùng trong các API route cần chặn quyền: if (!isAdminRequest(req)) return 401
 export function isAdminRequest(req: NextRequest): boolean {
   const token = req.cookies.get(SESSION_COOKIE_NAME)?.value;
-  return verifySessionToken(token);
+  return 1 === verifySessionToken(token);
+}
+
+export function isSuperAdminRequest(req: NextRequest): boolean {
+  const token = req.cookies.get(SESSION_COOKIE_NAME)?.value;
+  return 2 === verifySessionToken(token);
 }
