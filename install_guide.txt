@@ -1,0 +1,19 @@
+--
+ssh -i ssh-key-2026-08-12.key ubuntu@152.69.216.64
+ 
+ http://152.69.216.64:3000/
+ 
+ nc -vz 152.69.216.64 3000
+ 
+ npm run dev -- -H 0.0.0.0
+
+
+--check iptables 
+sudo iptables -L INPUT -n --line-numbers | grep 3000
+
+# Xóa luật bị sai (thay số_thứ_tự bằng số dòng của luật 3000 bị sai)
+sudo iptables -D INPUT số_thứ_tự 
+
+# Thêm lại luật vào vị trí số 6 (nằm trên dòng REJECT)
+sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 3000 -j ACCEPT
+sudo netfilter-persistent save

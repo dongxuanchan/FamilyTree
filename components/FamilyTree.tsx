@@ -133,9 +133,8 @@ export default function FamilyTree() {
 
       if (data.length === 0) return;
 
-      // @ts-expect-error - thư viện family-chart không có type định nghĩa sẵn
       const f3 = (await import("family-chart")).default;
-      await import("family-chart/styles/family-chart.css");
+      //await import("family-chart/styles/family-chart.css");
 
       // Đọc khoảng cách từ CSS của layout đang bật (data-layout trên <html>) thay vì
       // số viết cứng - đảm bảo tự đồng bộ mỗi khi đổi layout, không cần sửa file này
@@ -143,7 +142,7 @@ export default function FamilyTree() {
       const ySpacing = readCssNumberVar("--card-y-spacing", 230);
 
       const f3Chart = f3
-        .createChart(chartRef.current, data)
+        .createChart(chartRef.current, data as any)
         .setTransitionTime(600)
         .setCardXSpacing(xSpacing)
         .setCardYSpacing(ySpacing)
