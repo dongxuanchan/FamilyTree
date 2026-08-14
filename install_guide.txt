@@ -19,3 +19,6 @@ sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 3000 -j ACCEPT
 sudo netfilter-persistent save
 
 git pull origin main
+
+npm run build
+npm run start
