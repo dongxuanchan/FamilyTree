@@ -191,6 +191,7 @@ body {
 
 .toolbar {
   display: flex;
+  flex-wrap: wrap;
   gap: 12px;
   align-items: center;
   padding: 18px 24px;
@@ -202,10 +203,22 @@ body {
 .toolbar h1 {
   font-family: "Fraunces", serif;
   font-weight: 600;
-  font-size: 22px;
+  font-size: var(--toolbar-title-size);
   letter-spacing: 0.3px;
   margin: 0;
-  flex: 1;
+  flex: 1 1 auto;
+  min-width: 160px;
+}
+
+@media (max-width: 640px) {
+  .toolbar h1 {
+    flex-basis: 100%;
+  }
+
+  .toolbar .btn {
+    padding: 7px 12px;
+    font-size: 13px;
+  }
 }
 
 .btn {

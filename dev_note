@@ -20,5 +20,6 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 luôn được gọi 2 lần khi load trang FamilyTree ?
 -secure: process.env.NODE_ENV === "production" ???
 -tại sao biến trong các hàm luôn khai báo là const thay vì let ?
+-      //await import("family-chart/styles/family-chart.css"); ?
 
 *** tạm tắt secure cho cookie, phải bật lại secure: process.env.NODE_ENV === "production" khi set up HTTPS cho máy ảo thông qua Cloudflare hoặc Caddy 

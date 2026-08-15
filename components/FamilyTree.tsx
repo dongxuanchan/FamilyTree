@@ -7,6 +7,8 @@ import RelationshipForm from "./RelationshipForm";
 import LoginForm from "./LoginForm";
 import type { FamilyChartNode } from "@/lib/familyChartTransform";
 import { getInitials } from "@/lib/utils";
+import ImportDataForm from "./ImportDataForm";
+
 
 // Tạo HTML riêng cho mỗi card trong cây thay vì dùng template mặc định của family-chart
 function buildCardHtml(d: any): string {
@@ -61,7 +63,6 @@ export default function FamilyTree() {
   const [showAddPerson, setShowAddPerson] = useState(false);
   const [showAddRel, setShowAddRel] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
-  const [showExportData, setShowExportData] = useState(false);
   const [showImportData, setShowImportData] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
@@ -119,6 +120,27 @@ export default function FamilyTree() {
     setPeople(data);
     return data;
   }, []);
+
+// Gọi API export -> tạo Blob ngay trên trình duyệt -> tự bấm hộ 1 thẻ <a download>
+  // để trigger tải file, không cần server ghi file ra ổ đĩa (an toàn hơn, hoạt động
+  // được cả khi deploy lên môi trường không có quyền ghi filesystem)
+  async function handleExport() {
+    const res = await fetch("/api/export");
+    if (!res.ok) {
+      alert("Xuất dữ liệu thất bại - kiểm tra lại bạn đã đăng nhập admin chưa.");
+      return;
+    }
+    const data = await res.json();
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `family-tree-export-${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
 
   // Vẽ / vẽ lại cây mỗi khi dữ liệu thay đổi
   useEffect(() => {
@@ -185,7 +207,7 @@ export default function FamilyTree() {
           </>
           ) : (
           <>
-            <button className="btn" onClick={() => setShowExportData(true)}>
+            <button className="btn btn-secondary" onClick={handleExport}>
               Xuất dữ liệu
             </button>
             <button className="btn" onClick={() => setShowImportData(true)}>
@@ -241,6 +263,10 @@ export default function FamilyTree() {
             //refresh();
           }}
         />
+      )}
+
+      {showImportData && (
+        <ImportDataForm onClose={() => setShowImportData(false)} onImported={refresh} />
       )}
     </div>
   );

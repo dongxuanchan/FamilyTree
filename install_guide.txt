@@ -22,3 +22,19 @@ git pull origin main
 
 npm run build
 npm run start
+
+https://dogia.io.vn/
+
+ubuntu@instance-20260813-0010:~/DXC/FamilyTree/FamilyTree$ pm2 save
+[PM2] Saving current process list...
+[PM2] Successfully saved in /home/ubuntu/.pm2/dump.pm2
+
+pm2 restart family-tree --max-memory-restart 400M
+pm2 save
+
+pm2 show family-tree
+
+pm2 status
+pm2 logs family-tree
+pm2 restart family-tree
+pm2 stop family-tree

@@ -18,8 +18,8 @@ export async function POST(req: NextRequest) {
   const res = NextResponse.json({ success: true });
   res.cookies.set(SESSION_COOKIE_NAME, token, {
     httpOnly: true, // JS phía client không đọc được cookie này -> chống XSS đánh cắp session
-    //secure: process.env.NODE_ENV === "production",
-    secure: false,
+    secure: process.env.NODE_ENV === "production",
+    //secure: false,
     sameSite: "lax",
     maxAge: SESSION_MAX_AGE,
     path: "/"
