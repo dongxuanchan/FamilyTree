@@ -38,3 +38,4 @@ pm2 status
 pm2 logs family-tree
 pm2 restart family-tree
 pm2 stop family-tree
+pm2 start family-tree
