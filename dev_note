@@ -1,6 +1,5 @@
 #check lại lỗi báo trong FamilyTree.tsx
-#các hàm update dữ liệu đều phải thêm checking isAdminRequest(), có cách nào make global setting for all ?
-#validate all inout data khi nhập mới 1 thành viên
+
 ##
 --ADMIN_PASSWORD_HASH
 node -e "
@@ -16,10 +15,16 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 
 ###BUGs
 -trang chi tiết ko tự động ẩn hiện các nút thêm/xóa khi User Đăng nhập/đăng xuất
--tại sao GET http://localhost:3000/api/people và http://localhost:3000/api/auth/me
-luôn được gọi 2 lần khi load trang FamilyTree ?
+Router Cache của Next.js App Router
+cấu hình Next.js không cache route động trên toàn app, thay vì phải nhớ gọi router.refresh() ở từng nơi //staleTimes
+-tại sao GET http://localhost:3000/api/people và http://localhost:3000/api/auth/me luôn được gọi 2 lần khi load trang FamilyTree ?
+reactStrictMode in DEV mode, not in PROD
 -secure: process.env.NODE_ENV === "production" ???
+tạm tắt secure cho cookie, phải bật lại secure: process.env.NODE_ENV === "production" khi set up HTTPS cho máy ảo thông qua Cloudflare hoặc Caddy 
 -tại sao biến trong các hàm luôn khai báo là const thay vì let ?
--      //await import("family-chart/styles/family-chart.css"); ?
+-//await import("family-chart/styles/family-chart.css"); ?
 
-*** tạm tắt secure cho cookie, phải bật lại secure: process.env.NODE_ENV === "production" khi set up HTTPS cho máy ảo thông qua Cloudflare hoặc Caddy 
+###EVOLs
+--Chức năng canh chỉnh ảnh khi upload Avatar
+--các hàm update dữ liệu đều phải thêm checking isAdminRequest(), có cách nào make global setting for all ?
+--validate all inout data khi nhập mới 1 thành viên
