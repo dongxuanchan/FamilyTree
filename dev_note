@@ -28,3 +28,5 @@ tạm tắt secure cho cookie, phải bật lại secure: process.env.NODE_ENV =
 --Chức năng canh chỉnh ảnh khi upload Avatar
 --các hàm update dữ liệu đều phải thêm checking isAdminRequest(), có cách nào make global setting for all ?
 --validate all inout data khi nhập mới 1 thành viên
+--thêm các theme mới với tông gồm 2 màu chủ đạo, thêm background hoa văn dạng mờ
+--thêm phần ghi chú dạng textare

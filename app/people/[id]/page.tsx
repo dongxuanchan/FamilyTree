@@ -30,7 +30,7 @@ export default function PersonDetailPage({ params }: PageProps) {
   const genderLabel = person.gender === "F" ? "Nữ" : "Nam";
 
   const years = person.birth_date
-    ? `${person.birth_date}${person.death_date ? " – " + person.death_date : " – nay"}`
+    ? `${person.birth_date}${person.death_date ? " – " + person.death_date : ""}`
     : null;
 
 
