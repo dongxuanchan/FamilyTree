@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { PersonRow } from "@/lib/familyChartTransform";
+import ImageCropper from "./ImageCropper";
 
 interface Props {
   onClose: () => void;
@@ -13,7 +14,7 @@ interface Props {
 
 // Đọc file ảnh, resize xuống tối đa 200x200px rồi trả về chuỗi base64 (data URL).
 // Resize để tránh phình database SQLite khi người dùng chọn ảnh gốc quá lớn (vài MB).
-function resizeImageToDataUrl(file: File, maxSize = 200): Promise<string> {
+/*function resizeImageToDataUrl(file: File, maxSize = 200): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onerror = () => reject(new Error("Không đọc được file ảnh"));
@@ -34,7 +35,7 @@ function resizeImageToDataUrl(file: File, maxSize = 200): Promise<string> {
     };
     reader.readAsDataURL(file);
   });
-}
+}*/
 
 const MONTHS = Array.from({ length: 12 }, (_, i) => i + 1);
 const DAYS = Array.from({ length: 31 }, (_, i) => i + 1);
@@ -76,6 +77,9 @@ export default function PersonForm({ onClose, onSaved, personId, initialData }: 
   const [isAlive, setIsAlive] = useState(!initialData?.death_date);
   const [deathYear, setDeathYear] = useState(initialData?.death_date ?? "");
   const [avatar, setAvatar] = useState<string | null>(initialData?.avatar ?? null);
+  const [rawImageSrc, setRawImageSrc] = useState<string | null>(null);
+  const [showCropper, setShowCropper] = useState(false);
+  
   const [phone, setPhone] = useState(initialData?.phone ?? "");
   const [facebook, setFacebook] = useState(initialData?.facebook ?? "");
   const [occupation, setOccupation] = useState(initialData?.occupation ?? "");
@@ -83,21 +87,23 @@ export default function PersonForm({ onClose, onSaved, personId, initialData }: 
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
-  async function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    if (!file.type.startsWith("image/")) {
-      setError("Vui lòng chọn file ảnh (jpg, png...)");
-      return;
-    }
-    try {
-      const dataUrl = await resizeImageToDataUrl(file);
-      setAvatar(dataUrl);
-      setError("");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Không xử lý được ảnh");
-    }
+ function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
+  const file = e.target.files?.[0];
+  if (!file) return;
+  if (!file.type.startsWith("image/")) {
+    setError("Vui lòng chọn file ảnh (jpg, png...)");
+    return;
   }
+  const reader = new FileReader();
+  reader.onload = () => {
+    setRawImageSrc(reader.result as string);
+    setShowCropper(true);
+    setError("");
+  };
+  reader.onerror = () => setError("Không đọc được file ảnh");
+  reader.readAsDataURL(file);
+  e.target.value = ""; // reset input - đảm bảo chọn lại đúng file cũ vẫn kích hoạt onChange
+}
 
   // Ghép Năm/Tháng/Ngày thành 1 chuỗi ngày sinh, chỉ thêm phần nào người dùng đã điền.
   // Ngày chỉ được ghép vào nếu đã có tháng (tránh chuỗi vô nghĩa kiểu "1990--15").
@@ -163,6 +169,7 @@ export default function PersonForm({ onClose, onSaved, personId, initialData }: 
   }
 
   return (
+    <>
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
         <h3>{isEditMode ? "Sửa thông tin thành viên" : "Thêm thành viên mới"}</h3>
@@ -299,5 +306,21 @@ export default function PersonForm({ onClose, onSaved, personId, initialData }: 
         </form>
       </div>
     </div>
+
+    {showCropper && rawImageSrc && (
+        <ImageCropper
+          imageSrc={rawImageSrc}
+          onCancel={() => {
+            setShowCropper(false);
+            setRawImageSrc(null);
+          }}
+          onConfirm={(croppedDataUrl) => {
+            setAvatar(croppedDataUrl);
+            setShowCropper(false);
+            setRawImageSrc(null);
+          }}
+        />
+      )}
+    </>
   );
 }
