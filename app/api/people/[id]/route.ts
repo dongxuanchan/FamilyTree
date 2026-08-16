@@ -31,8 +31,7 @@ export async function PUT(req: NextRequest, { params }: Params) {
   }
 
   const fields = [
-    "first_name",
-    "last_name",
+    "full_name",
     "gender",
     "birth_date",
     "death_date",
