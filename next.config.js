@@ -12,7 +12,7 @@ const nextConfig = {
       static: 180
     }
   },
-  allowedDevOrigins: ['152.69.216.64', 'localhost']
+  allowedDevOrigins: ['152.69.216.64', 'localhost', 'dogia.io.vn']
 };
 
 module.exports = nextConfig;

@@ -30,3 +30,4 @@ tạm tắt secure cho cookie, phải bật lại secure: process.env.NODE_ENV =
 --validate all inout data khi nhập mới 1 thành viên
 --thêm các theme mới với tông gồm 2 màu chủ đạo, thêm background hoa văn dạng mờ
 --thêm phần ghi chú dạng textare
+--bị lỗi không lưu cookie trên iphone/Safari, test lại chức năng crop avatar 
