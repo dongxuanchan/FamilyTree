@@ -58,9 +58,27 @@
   --avatar-unknown-1: #9a9a9a;
   --avatar-unknown-2: #6e6e6e;
 
+  
+  /* big card */
+  --chart-height: 80vh;
+  --toolbar-padding: 18px 24px;
+  --toolbar-title-size: 22px;
+  --modal-width: 360px;
+  --modal-radius: 14px;
+  --btn-radius: 8px;
+  --card-width: 170px;
+  --card-padding: 10px 14px;
+  --card-radius: 14px;
+  --card-gap: 7px;
+  --card-x-spacing: 220;
+  --card-y-spacing: 300;
+  --avatar-size: 80px;
+  --avatar-font-size: 18px;
+  --name-font-size: 16px;
+  --years-font-size: 12px;
+  --transition-speed: 0.2s;
+
   /* horizontal card layout*/  
-  --fc-card-width: 210px;
-  --fc-card-padding: 10px 14px;
   --fc-card-male-flex-direction: row-reverse; 
   --fc-card-male-text-align: right;
   --fc-card-female-flex-direction: row; 
@@ -71,8 +89,6 @@
   --fc-card-name-text-overflow: ellipsis;
   --fc-card-name-overflow-wrap: unset; 
   --fc-card-name-line-height: unset;
-  --card-x-spacing: 250px;
-  --card-y-spacing: 150px;
 }
 
 [data-theme="forest"] {
@@ -119,8 +135,6 @@
 
 [card-layout="vertical"] {
     /* vertical card layout*/  
-  --fc-card-width: 150px;
-  --fc-card-padding: 10px 0px 10px;
   --fc-card-male-flex-direction: column; 
   --fc-card-male-text-align: center;
   --fc-card-female-flex-direction: column; 
@@ -131,9 +145,48 @@
   --fc-card-name-text-overflow: unset; 
   --fc-card-name-overflow-wrap: break-word; 
   --fc-card-name-line-height: 1.25;
-  --card-x-spacing: 210px;
-  --card-y-spacing: 230px;
+}
 
+[data-layout="compact"] {
+  /* ---- Layout thứ 2: Compact - card nhỏ, cây hiển thị được nhiều người hơn ---- */
+  --chart-height: 70vh;
+  --toolbar-padding: 12px 18px;
+  --toolbar-title-size: 18px;
+  --modal-width: 320px;
+  --modal-radius: 10px;
+  --btn-radius: 6px;
+  --card-width: 150px;
+  --card-padding: 8px 12px;
+  --card-radius: 10px;
+  --card-gap: 5px;
+  --card-x-spacing: 200;
+  --card-y-spacing: 250;
+  --avatar-size: 50px;
+  --avatar-font-size: 13px;
+  --name-font-size: 12px;
+  --years-font-size: 10px;
+  --transition-speed: 0.15s;
+}
+
+[data-layout="tiny"] {
+  /* ---- Layout thứ 3: Tiny - dùng khi cây có rất nhiều người (>40) ---- */
+  --chart-height: 70vh;
+  --toolbar-padding: 10px 16px;
+  --toolbar-title-size: 16px;
+  --modal-width: 300px;
+  --modal-radius: 8px;
+  --btn-radius: 5px;
+  --card-width: 150px;
+  --card-padding: 6px 8px;
+  --card-radius: 8px;
+  --card-gap: 3px;
+  --card-x-spacing: 170;
+  --card-y-spacing: 150;
+  --avatar-size: 28px;
+  --avatar-font-size: 11px;
+  --name-font-size: 11px;
+  --years-font-size: 9px;
+  --transition-speed: 0.12s;
 }
 
 /* ==========================================================================
@@ -155,7 +208,7 @@ body {
 
 #FamilyChart {
   width: 100%;
-  height: 80vh;
+  height: var(--chart-height);
   position: relative;
   overflow: hidden;
   background:
@@ -194,7 +247,7 @@ body {
   flex-wrap: wrap;
   gap: 12px;
   align-items: center;
-  padding: 18px 24px;
+  padding: var(--toolbar-padding);
   border-bottom: 3px solid var(--primary);
   background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
   color: var(--on-primary);
@@ -226,7 +279,7 @@ body {
   background: var(--accent);
   color: var(--on-accent);
   border: none;
-  border-radius: 8px;
+  border-radius: var(--btn-radius);
   cursor: pointer;
   font-size: 14px;
   font-weight: 600;
@@ -255,8 +308,8 @@ body {
 .modal {
   background: var(--surface);
   padding: 26px;
-  border-radius: 14px;
-  width: 360px;
+  border-radius: var(--modal-radius);
+  width: var(--modal-width);
   max-width: 90vw;
   box-shadow: 0 20px 50px rgba(var(--overlay-rgb), 0.25);
   max-height: 85vh;
@@ -350,15 +403,15 @@ body {
 .fc-card {
   display: flex;
   align-items: center;
-  gap: 10px;
-  width: var(--fc-card-width);
-  padding: var(--fc-card-padding);
+  gap: var(--card-gap);
+  width: var(--card-width);
+  padding: var(--card-padding);
   border-radius: 12px;
   background: var(--surface-card);
   border: 1px solid rgba(var(--primary-rgb), 0.12);
   box-shadow: 0 4px 10px rgba(var(--primary-rgb), 0.1);
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
   font-family: "Inter", sans-serif;
 }
 
@@ -404,18 +457,18 @@ body {
 
 .fc-card__avatar {
   flex-shrink: 0;
-  width: 60px;
-  height: 60px;
+  width: var(--avatar-size);
+  height: var(--avatar-size);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
   font-weight: 700;
-  font-size: 15px;
+  font-size: var(--avatar-font-size);
   font-family: "Fraunces", serif;
   box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.4);
-  transition: box-shadow 0.2s ease;
+  transition: box-shadow var(--transition-speed) ease;
 }
 
 .fc-card__avatar--img {
@@ -448,7 +501,7 @@ body {
 
 .fc-card__name {
   font-weight: 600;
-  font-size: 14px;
+  font-size: var(--name-font-size);
   color: var(--text);
   white-space: var(--fc-card-name-white-space);
   overflow: var(--fc-card-name-overflow);
@@ -458,7 +511,7 @@ body {
 }
 
 .fc-card__years {
-  font-size: 12px;
+  font-size: var(--years-font-size);
   color: var(--text-muted);
   margin-top: 2px;
 }
@@ -523,8 +576,8 @@ body {
 }
 
 .detail-avatar {
-  width: 96px;
-  height: 96px;
+  width: 150px;
+  height: 150px;
   border-radius: 50%;
   object-fit: cover;
   margin: 0 auto 16px;

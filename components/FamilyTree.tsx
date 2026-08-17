@@ -154,6 +154,7 @@ export default function FamilyTree() {
       chartRef.current.innerHTML = "";
 
       if (data.length === 0) return;
+      //console.log('data.length: ',data.length);
 
       const f3 = (await import("family-chart")).default;
       //await import("family-chart/styles/family-chart.css");
