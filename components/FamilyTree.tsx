@@ -36,7 +36,7 @@ function buildCardHtml(d: any): string {
     : `<div class="fc-card__avatar">${initials}</div>`;
 
   return `
-    <div class="fc-card ${genderClass}">
+    <div class="fc-card ${genderClass}" data-person-id="${nodeId}">
       <button class="fc-card__detail-btn" data-view-detail="${nodeId}" title="Xem chi tiết" type="button">ⓘ</button>
       ${avatarHtml}
       <div class="fc-card__body">
@@ -57,8 +57,67 @@ function readCssNumberVar(name: string, fallback: number): number {
   return Number.isFinite(parsed) ? parsed : fallback;
 }
 
+// Cắt bớt "data" (đã có sẵn từ /api/people) xuống chỉ còn người nằm trong phạm vi
+// ± N thế hệ quanh 1 "gốc" tự chọn (người không có cha/mẹ nào được ghi nhận - khả năng
+// cao là tổ tiên đời cao nhất trong dữ liệu). Chạy hoàn toàn ở client, không gọi thêm API.
+function truncateToGenerations(
+  data: FamilyChartNode[],
+  ancestorGens: number,
+  descendantGens: number
+): FamilyChartNode[] {
+  if (data.length === 0) return data;
+
+  const byId = new Map(data.map((n) => [n.id, n]));
+  const seed = data.find((n) => !n.rels.parents || n.rels.parents.length === 0) ?? data[0];
+
+  const included = new Set<string>();
+
+  function addWithSpouses(id: string) {
+    if (included.has(id)) return;
+    included.add(id);
+    //not include Spouses
+    //for (const s of byId.get(id)?.rels.spouses ?? []) included.add(s);
+  }
+
+  function walkUp(id: string, gensLeft: number) {
+    addWithSpouses(id);
+    if (gensLeft <= 0) return;
+    for (const p of byId.get(id)?.rels.parents ?? []) walkUp(p, gensLeft - 1);
+  }
+
+  function walkDown(id: string, gensLeft: number) {
+    addWithSpouses(id);
+    if (gensLeft <= 0) return;
+    for (const c of byId.get(id)?.rels.children ?? []) walkDown(c, gensLeft - 1);
+  }
+
+  addWithSpouses(seed.id);
+  const seedParents = byId.get(seed.id)?.rels.parents ?? [];
+  for (const parentId of seedParents) {
+    for (const siblingId of byId.get(parentId)?.rels.children ?? []) addWithSpouses(siblingId);
+  }
+  if (ancestorGens > 0) for (const parentId of seedParents) walkUp(parentId, ancestorGens - 1);
+  if (descendantGens > 0) {
+    for (const childId of byId.get(seed.id)?.rels.children ?? []) walkDown(childId, descendantGens - 1);
+  }
+
+  // Giữ lại đúng người nằm trong "included", đồng thời lọc rels để không còn tham
+  // chiếu "ma" tới người đã bị cắt bỏ
+  return data
+    .filter((n) => included.has(n.id))
+    .map((n) => ({
+      ...n,
+      rels: {
+        parents: n.rels.parents?.filter((id) => included.has(id)),
+        children: n.rels.children?.filter((id) => included.has(id)),
+        spouses: n.rels.spouses?.filter((id) => included.has(id))
+      }
+    }));
+}
+
 export default function FamilyTree() {
   const chartRef = useRef<HTMLDivElement>(null);
+  const pendingFocusIdRef = useRef<string | null>(null);
   const router = useRouter();
   const [showAddPerson, setShowAddPerson] = useState(false);
   const [showAddRel, setShowAddRel] = useState(false);
@@ -68,6 +127,7 @@ export default function FamilyTree() {
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [people, setPeople] = useState<FamilyChartNode[]>([]);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [showFullTree, setShowFullTree] = useState(false);
 
   // Lắng nghe click vào nút "xem chi tiết" trên card bằng event delegation, gắn 1 LẦN
   // DUY NHẤT lúc mount (không đặt trong effect vẽ cây bên dưới) - vì effect vẽ cây chạy
@@ -79,19 +139,36 @@ export default function FamilyTree() {
     if (!container) return;
 
     function handleClick(e: MouseEvent) {
-      const target = (e.target as HTMLElement).closest<HTMLElement>("[data-view-detail]");
-      if (!target) return;
-      // Chặn không cho sự kiện lan lên card cha - tránh kích hoạt hành vi
-      // "click để canh giữa cây" mặc định của family-chart trên cùng 1 click
-      e.stopPropagation();
-      e.preventDefault();
-      const id = target.getAttribute("data-view-detail");
-      if (id) router.push(`/people/${id}`);
+      const el = e.target as HTMLElement;
+
+      const detailBtn = el.closest<HTMLElement>("[data-view-detail]");
+      if (detailBtn) {
+        e.stopPropagation();
+        e.preventDefault();
+        const id = detailBtn.getAttribute("data-view-detail");
+        if (id) router.push(`/people/${id}`);
+        return;
+      }
+
+      // Click vào bất kỳ đâu khác trên 1 card (không phải nút "ⓘ") -> coi như user đã
+      // bắt đầu tự duyệt cây -> bỏ giới hạn thế hệ ban đầu. KHÔNG gọi stopPropagation/
+      // preventDefault ở đây - để hành vi "click để canh giữa" mặc định của family-chart
+      // vẫn chạy song song bình thường, không bị chặn.
+      const card = el.closest<HTMLElement>(".fc-card");
+      if (card && !showFullTree) {
+        // Ghi nhớ đúng người vừa bấm - sau khi cây vẽ lại đầy đủ, sẽ "bấm hộ" lại
+        // đúng người này 1 lần nữa để family-chart tự canh giữa theo đúng cơ chế
+        // sẵn có của nó (xem đoạn xử lý trong render() bên dưới)
+        pendingFocusIdRef.current = card.getAttribute("data-person-id");
+        setShowFullTree(true);
+      }
     }
+
+
 
     container.addEventListener("click", handleClick);
     return () => container.removeEventListener("click", handleClick);
-  }, [router]);
+  }, [router, showFullTree]);
 
   // Kiểm tra trạng thái đăng nhập admin ngay khi trang tải
   useEffect(() => {
@@ -150,10 +227,13 @@ export default function FamilyTree() {
       const data = await fetchData();
       if (cancelled || !chartRef.current) return;
 
+      //cắt bớt data nếu User chọn view Home 
+      const treeData = showFullTree ? data : truncateToGenerations(data, 0, 1);
+
       // family-chart thao tác trực tiếp với DOM -> chỉ import ở client và dọn dẹp node cũ trước khi vẽ lại
       chartRef.current.innerHTML = "";
 
-      if (data.length === 0) return;
+      if (treeData.length === 0) return;
       //console.log('data.length: ',data.length);
 
       const f3 = (await import("family-chart")).default;
@@ -165,7 +245,7 @@ export default function FamilyTree() {
       const ySpacing = readCssNumberVar("--card-y-spacing", 230);
 
       const f3Chart = f3
-        .createChart(chartRef.current, data as any)
+        .createChart(chartRef.current, treeData as any)
         .setTransitionTime(600)
         .setCardXSpacing(xSpacing)
         .setCardYSpacing(ySpacing)
@@ -179,13 +259,29 @@ export default function FamilyTree() {
         .setOnHoverPathToMain();
 
       f3Chart.updateTree({ initial: true });
+
+      // Nếu vừa chuyển từ chế độ giới hạn sang đầy đủ do click vào 1 người - giả lập
+      // click lại đúng người đó để family-chart tự canh giữa theo đúng cơ chế click mặc
+      // định của chính nó, thay vì phải tự tìm cách "set vị trí ban đầu" qua API chưa
+      // xác thực. requestAnimationFrame đảm bảo đợi trình duyệt vẽ xong DOM của lần
+      // updateTree() này trước khi tìm phần tử để bấm.
+      if (pendingFocusIdRef.current) {
+        const targetId = pendingFocusIdRef.current;
+        pendingFocusIdRef.current = null;
+        requestAnimationFrame(() => {
+          const targetCard = chartRef.current?.querySelector<HTMLElement>(
+            `[data-person-id="${targetId}"]`
+          );
+          targetCard?.click();
+        });
+      }
     }
 
     render();
     return () => {
       cancelled = true;
     };
-  }, [fetchData, refreshKey]);
+  }, [fetchData, refreshKey, showFullTree]);
 
   const refresh = () => setRefreshKey((k) => k + 1);
 
@@ -193,6 +289,11 @@ export default function FamilyTree() {
     <div>
       <div className="toolbar">
         <h1>Cây phả hệ Đỗ Gia</h1>
+        {showFullTree && (
+          <button className="btn btn-secondary" onClick={() => setShowFullTree(false)}>
+            🏠 Cây rút gọn
+          </button>
+        )}
         {(isAdmin || isSuperAdmin) ? (
           isAdmin ? (
           <>
