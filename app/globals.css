@@ -66,17 +66,18 @@
   --modal-width: 360px;
   --modal-radius: 14px;
   --btn-radius: 8px;
-  --card-width: 170px;
+  --card-width: 160px;
   --card-padding: 10px 14px;
   --card-radius: 14px;
   --card-gap: 7px;
   --card-x-spacing: 220;
-  --card-y-spacing: 300;
+  --card-y-spacing: 250;
   --avatar-size: 80px;
   --avatar-font-size: 18px;
-  --name-font-size: 16px;
-  --years-font-size: 12px;
+  --name-font-size: 14px;
+  --years-font-size: 11px;
   --transition-speed: 0.2s;
+  --detail-btn-font-size: 15px;
 
   /* horizontal card layout*/  
   --fc-card-male-flex-direction: row-reverse; 
@@ -166,6 +167,7 @@
   --name-font-size: 12px;
   --years-font-size: 10px;
   --transition-speed: 0.15s;
+  --detail-btn-font-size: 12px;
 }
 
 [data-layout="tiny"] {
@@ -187,6 +189,7 @@
   --name-font-size: 11px;
   --years-font-size: 9px;
   --transition-speed: 0.12s;
+  --detail-btn-font-size: 10px;
 }
 
 /* ==========================================================================
@@ -434,7 +437,7 @@ body {
   border: none;
   background: rgba(var(--primary-rgb), 0.08);
   color: var(--primary);
-  font-size: 12px;
+  font-size: var(--detail-btn-font-size);
   line-height: 1;
   cursor: pointer;
   display: flex;
