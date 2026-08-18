@@ -192,7 +192,7 @@ export default function FamilyTree() {
   return (
     <div>
       <div className="toolbar">
-        <h1>Cây phả hệ gia đình</h1>
+        <h1>Cây phả hệ Đỗ Gia</h1>
         {(isAdmin || isSuperAdmin) ? (
           isAdmin ? (
           <>
