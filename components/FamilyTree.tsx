@@ -91,7 +91,10 @@ function truncateToGenerations(
     for (const c of byId.get(id)?.rels.children ?? []) walkDown(c, gensLeft - 1);
   }
 
-  addWithSpouses(seed.id);
+  //add 2 nút gốc (Ông, Bà)
+  included.add(seed.id);
+  for (const s of byId.get(seed.id)?.rels.spouses ?? []) included.add(s);
+
   const seedParents = byId.get(seed.id)?.rels.parents ?? [];
   for (const parentId of seedParents) {
     for (const siblingId of byId.get(parentId)?.rels.children ?? []) addWithSpouses(siblingId);
