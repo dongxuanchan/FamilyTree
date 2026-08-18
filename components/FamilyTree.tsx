@@ -36,7 +36,7 @@ function buildCardHtml(d: any): string {
     : `<div class="fc-card__avatar">${initials}</div>`;
 
   return `
-    <div class="fc-card ${genderClass}">
+    <div class="fc-card ${genderClass}" data-person-id="${nodeId}">
       <button class="fc-card__detail-btn" data-view-detail="${nodeId}" title="Xem chi tiết" type="button">ⓘ</button>
       ${avatarHtml}
       <div class="fc-card__body">
@@ -75,7 +75,8 @@ function truncateToGenerations(
   function addWithSpouses(id: string) {
     if (included.has(id)) return;
     included.add(id);
-    for (const s of byId.get(id)?.rels.spouses ?? []) included.add(s);
+    //not include Spouses
+    //for (const s of byId.get(id)?.rels.spouses ?? []) included.add(s);
   }
 
   function walkUp(id: string, gensLeft: number) {
@@ -116,6 +117,7 @@ function truncateToGenerations(
 
 export default function FamilyTree() {
   const chartRef = useRef<HTMLDivElement>(null);
+  const pendingFocusIdRef = useRef<string | null>(null);
   const router = useRouter();
   const [showAddPerson, setShowAddPerson] = useState(false);
   const [showAddRel, setShowAddRel] = useState(false);
@@ -154,6 +156,10 @@ export default function FamilyTree() {
       // vẫn chạy song song bình thường, không bị chặn.
       const card = el.closest<HTMLElement>(".fc-card");
       if (card && !showFullTree) {
+        // Ghi nhớ đúng người vừa bấm - sau khi cây vẽ lại đầy đủ, sẽ "bấm hộ" lại
+        // đúng người này 1 lần nữa để family-chart tự canh giữa theo đúng cơ chế
+        // sẵn có của nó (xem đoạn xử lý trong render() bên dưới)
+        pendingFocusIdRef.current = card.getAttribute("data-person-id");
         setShowFullTree(true);
       }
     }
@@ -222,7 +228,7 @@ export default function FamilyTree() {
       if (cancelled || !chartRef.current) return;
 
       //cắt bớt data nếu User chọn view Home 
-      const treeData = showFullTree ? data : truncateToGenerations(data, 2, 2);
+      const treeData = showFullTree ? data : truncateToGenerations(data, 0, 1);
 
       // family-chart thao tác trực tiếp với DOM -> chỉ import ở client và dọn dẹp node cũ trước khi vẽ lại
       chartRef.current.innerHTML = "";
@@ -253,6 +259,22 @@ export default function FamilyTree() {
         .setOnHoverPathToMain();
 
       f3Chart.updateTree({ initial: true });
+
+      // Nếu vừa chuyển từ chế độ giới hạn sang đầy đủ do click vào 1 người - giả lập
+      // click lại đúng người đó để family-chart tự canh giữa theo đúng cơ chế click mặc
+      // định của chính nó, thay vì phải tự tìm cách "set vị trí ban đầu" qua API chưa
+      // xác thực. requestAnimationFrame đảm bảo đợi trình duyệt vẽ xong DOM của lần
+      // updateTree() này trước khi tìm phần tử để bấm.
+      if (pendingFocusIdRef.current) {
+        const targetId = pendingFocusIdRef.current;
+        pendingFocusIdRef.current = null;
+        requestAnimationFrame(() => {
+          const targetCard = chartRef.current?.querySelector<HTMLElement>(
+            `[data-person-id="${targetId}"]`
+          );
+          targetCard?.click();
+        });
+      }
     }
 
     render();
@@ -269,7 +291,7 @@ export default function FamilyTree() {
         <h1>Cây phả hệ Đỗ Gia</h1>
         {showFullTree && (
           <button className="btn btn-secondary" onClick={() => setShowFullTree(false)}>
-            🏠 Trang chủ
+            🏠 Cây rút gọn
           </button>
         )}
         {(isAdmin || isSuperAdmin) ? (
