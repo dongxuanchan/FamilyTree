@@ -37,10 +37,11 @@ function buildCardHtml(d: any): string {
 
   return `
     <div class="fc-card ${genderClass}" data-person-id="${nodeId}">
-      <button class="fc-card__detail-btn" data-view-detail="${nodeId}" title="Xem chi tiết" type="button">ⓘ</button>
-      ${avatarHtml}
-      <div class="fc-card__body">
-        <div class="fc-card__name">${fullname}</div>
+      <div class="fc-card__avatar-wrap">
+        ${avatarHtml}
+      </div>
+      <div class="fc-card__body"> 
+        <button class="fc-card__name" data-view-detail="${nodeId}" type="button">${fullname}</button>
         ${years ? `<div class="fc-card__years">${years}</div>` : ""}
       </div>
     </div>
@@ -328,14 +329,9 @@ export default function FamilyTree() {
             Đăng nhập admin
           </button>
         )}
-      </div>
-
-      <div className="panel">
-        {people.length === 0 && (
-          <p>Chưa có thành viên nào. {isAdmin ? "Bấm \"Thêm thành viên\" để bắt đầu." : "Đăng nhập admin để bắt đầu thêm thành viên."}</p>
-        )}
-        <div id="FamilyChart" ref={chartRef} />
-      </div>
+      </div>  
+        
+        <div id="FamilyChart" ref={chartRef} /> 
 
       {showAddPerson && (
         <PersonForm

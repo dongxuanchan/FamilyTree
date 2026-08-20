@@ -144,7 +144,7 @@ export default function ImageCropper({ imageSrc, onConfirm, onCancel }: Props) {
           <input
             type="range"
             min={minScale}
-            max={minScale * 4}
+            max={minScale * 6}
             step={0.01}
             value={scale}
             onChange={(e) => handleScaleChange(Number(e.target.value))}
