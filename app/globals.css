@@ -60,7 +60,7 @@
 
   
   /* big card */
-  --chart-height: 95vh;
+  --chart-height: 85vh;
   --toolbar-padding: 18px 24px;
   --toolbar-title-size: 22px;
   --modal-width: 360px;
@@ -146,6 +146,47 @@
   --fc-card-name-text-overflow: unset; 
   --fc-card-name-overflow-wrap: break-word; 
   --fc-card-name-line-height: 1.25;
+}
+
+[data-theme="heritage"] {
+  /* ---- Theme mới: Heritage - đỏ mận cổ + vàng đồng, nền giấy ngà ---- */
+  --bg-1: #faf6ed;
+  --bg-2: #f3ecdd;
+  --bg-3: #e9dfc8;
+  --surface: #fdfbf5;
+  --surface-card: #ffffff;
+  --border: #d8c9a3;
+  --border-input: #cbb98c;
+  --text: #2b1e17;
+  --text-muted: #7a6a54;
+  --primary: #6b1f2a;
+  --primary-rgb: 107, 31, 42;
+  --primary-light: #8b3a42;
+  --on-primary: #faf6ed;
+  --accent: #a9812e;
+  --accent-rgb: 169, 129, 46;
+  --accent-hover: #bf9640;
+  --on-accent: #faf6ed;
+  --secondary-bg: #f3ecdd;
+  --secondary-bg-hover: #e9dfc8;
+  --disabled-bg: #f0e9d8;
+  --disabled-text: #b8a988;
+  --overlay-rgb: 30, 20, 15;
+  --avatar-male-1: #2f4a3d;
+  --avatar-male-2: #1b2e25;
+  --avatar-female-1: #6b3550;
+  --avatar-female-2: #4a2438;
+  --avatar-unknown-1: #8a7b68;
+  --avatar-unknown-2: #5f5344;
+}
+
+/* Họa tiết hoa sen 8 cánh, vẽ trực tiếp bằng SVG (không cần file ảnh riêng), lặp lại
+   khắp nền ở độ mờ rất thấp - tạo cảm giác "giấy gia phả cổ" thay vì hình nổi bật */
+[data-theme="heritage"] body {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cg fill='none' stroke='%236b1f2a' stroke-width='1' opacity='0.06' transform='translate(80,80)'%3E%3Cpath d='M0,-46 C11,-29 11,-11 0,0 C-11,-11 -11,-29 0,-46 Z'/%3E%3Cpath d='M0,-46 C11,-29 11,-11 0,0 C-11,-11 -11,-29 0,-46 Z' transform='rotate(45)'/%3E%3Cpath d='M0,-46 C11,-29 11,-11 0,0 C-11,-11 -11,-29 0,-46 Z' transform='rotate(90)'/%3E%3Cpath d='M0,-46 C11,-29 11,-11 0,0 C-11,-11 -11,-29 0,-46 Z' transform='rotate(135)'/%3E%3Cpath d='M0,-46 C11,-29 11,-11 0,0 C-11,-11 -11,-29 0,-46 Z' transform='rotate(180)'/%3E%3Cpath d='M0,-46 C11,-29 11,-11 0,0 C-11,-11 -11,-29 0,-46 Z' transform='rotate(225)'/%3E%3Cpath d='M0,-46 C11,-29 11,-11 0,0 C-11,-11 -11,-29 0,-46 Z' transform='rotate(270)'/%3E%3Cpath d='M0,-46 C11,-29 11,-11 0,0 C-11,-11 -11,-29 0,-46 Z' transform='rotate(315)'/%3E%3Ccircle r='7'/%3E%3C/g%3E%3C/svg%3E"),
+    radial-gradient(circle at top left, var(--bg-1) 0%, var(--bg-2) 55%, var(--bg-3) 100%);
+  background-repeat: repeat, no-repeat;
+  background-size: 160px 160px, cover;
 }
 
 [data-layout="compact"] {
@@ -248,22 +289,16 @@ body {
 .toolbar {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 10px;
   align-items: center;
-  padding: var(--toolbar-padding);
-  border-bottom: 3px solid var(--primary);
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-  color: var(--on-primary);
+  justify-content: center;
+  padding: 20px 24px;
+  background: transparent;
+  border-bottom: 1px solid var(--border);
 }
 
 .toolbar h1 {
-  font-family: "Fraunces", serif;
-  font-weight: 600;
-  font-size: var(--toolbar-title-size);
-  letter-spacing: 0.3px;
-  margin: 0;
-  flex: 1 1 auto;
-  min-width: 160px;
+  display: none; /* bỏ hẳn banner tiêu đề, chỉ còn dòng nút bên dưới */
 }
 
 @media (max-width: 640px) {
@@ -278,20 +313,22 @@ body {
 }
 
 .btn {
-  padding: 9px 16px;
-  background: var(--accent);
-  color: var(--on-accent);
-  border: none;
-  border-radius: var(--btn-radius);
+  padding: 9px 18px;
+  background: transparent;
+  color: var(--primary);
+  border: 1px solid var(--primary);
+  border-radius: 2px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 12.5px;
   font-weight: 600;
-  transition: transform 0.15s ease, background 0.15s ease;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: background 0.25s ease, color 0.25s ease;
 }
 
 .btn:hover {
-  background: var(--accent-hover);
-  transform: translateY(-1px);
+  background: var(--primary);
+  color: var(--on-primary);
 }
 
 .panel {
@@ -383,23 +420,26 @@ body {
 }
 
 .btn-secondary {
+  background: transparent;
+  color: var(--text-muted);
+  border-color: var(--border);
+}
+
+.btn-secondary:hover {
   background: var(--secondary-bg);
   color: var(--text);
 }
 
-.btn-secondary:hover {
-  background: var(--secondary-bg-hover);
-}
-
 .btn-danger {
-  background: #c85c5c;
-  color: #fff;
+  background: transparent;
+  color: #8b3a3a;
+  border-color: #8b3a3a;
 }
 
 .btn-danger:hover {
-  background: #b34848;
+  background: #8b3a3a;
+  color: #fff;
 }
-
 
 /* ---------- Card trong cây (family-chart) ---------- */
 
@@ -741,4 +781,41 @@ body {
   padding: 0;
   border: none;
   accent-color: var(--primary);
+}
+
+/** 4 con dấu triện 
+[data-theme="heritage"] body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.16;
+  background-image: 
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='4' y='4' width='56' height='56' fill='none' stroke='%236b1f2a' stroke-width='4'/%3E%3Crect x='11' y='11' width='42' height='42' fill='none' stroke='%236b1f2a' stroke-width='1.5'/%3E%3Cpath d='M32 19 L41 32 L32 45 L23 32 Z' fill='none' stroke='%236b1f2a' stroke-width='2'/%3E%3Ccircle cx='32' cy='32' r='4' fill='%236b1f2a'/%3E%3C/svg%3E"),
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='4' y='4' width='56' height='56' fill='none' stroke='%236b1f2a' stroke-width='4'/%3E%3Crect x='11' y='11' width='42' height='42' fill='none' stroke='%236b1f2a' stroke-width='1.5'/%3E%3Cpath d='M32 19 L41 32 L32 45 L23 32 Z' fill='none' stroke='%236b1f2a' stroke-width='2'/%3E%3Ccircle cx='32' cy='32' r='4' fill='%236b1f2a'/%3E%3C/svg%3E"),
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='4' y='4' width='56' height='56' fill='none' stroke='%236b1f2a' stroke-width='4'/%3E%3Crect x='11' y='11' width='42' height='42' fill='none' stroke='%236b1f2a' stroke-width='1.5'/%3E%3Cpath d='M32 19 L41 32 L32 45 L23 32 Z' fill='none' stroke='%236b1f2a' stroke-width='2'/%3E%3Ccircle cx='32' cy='32' r='4' fill='%236b1f2a'/%3E%3C/svg%3E"),
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='4' y='4' width='56' height='56' fill='none' stroke='%236b1f2a' stroke-width='4'/%3E%3Crect x='11' y='11' width='42' height='42' fill='none' stroke='%236b1f2a' stroke-width='1.5'/%3E%3Cpath d='M32 19 L41 32 L32 45 L23 32 Z' fill='none' stroke='%236b1f2a' stroke-width='2'/%3E%3Ccircle cx='32' cy='32' r='4' fill='%236b1f2a'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: 60px 60px;
+  background-position:
+    16px 16px,
+    calc(100% - 16px) 16px,
+    16px calc(100% - 16px),
+    calc(100% - 16px) calc(100% - 16px);
+}
+**/
+
+/* Vân giấy cũ - nhiễu SVG rất nhẹ, phủ multiply lên toàn trang để mô phỏng bề mặt
+   giấy cũ có hạt/gợn, không phải hiệu ứng "static" lộ liễu */
+[data-theme="heritage"] body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.045;
+  mix-blend-mode: multiply;
+  background-repeat: repeat;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
