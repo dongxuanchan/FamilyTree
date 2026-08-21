@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "1. Đang kéo code mới từ Github..."
-git pull origin main
+git pull origin dong_gia
 
 # Kiểm tra tham số $1 xem có bằng -i hoặc --install không
 if [ "$1" == "-i" ] || [ "$1" == "--install" ]; then

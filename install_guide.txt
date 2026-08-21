@@ -39,3 +39,46 @@ pm2 stop family-tree
 pm2 start family-tree
 
 *** ./updateApp.sh
+
+
+
+
+# Mở cổng 80 trên tường lửa Ubuntu
+sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 80 -j ACCEPT
+
+# Điều hướng ngầm toàn bộ traffic từ cổng 80 sang cổng 3000
+sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 3000
+
+#Chạy lệnh sau để PM2 gọi lệnh npm start và đưa ứng dụng chạy ngầm dưới nền:
+pm2 start npm --name "family-tree" -- start
+
+4.Thiết lập tự khởi động cùng hệ điều hành (Rất quan trọng)
+Nếu máy chủ bị sập nguồn hoặc khởi động lại, app sẽ tự bật lên.Chạy lệnh sau để tạo kịch bản khởi động
+> pm2 startup
+Hệ thống sẽ in ra một dòng lệnh dài ở cuối màn hình. Bạn hãy copy toàn bộ dòng lệnh đó và dán xuống chạy lại 
+(dòng lệnh thường bắt đầu bằng chữ sudo env PATH...)
+.Sau khi chạy xong lệnh đó, gõ lệnh cuối cùng này để lưu lại cấu hình hiện tại
+>pm2 save
+
+Lệnh sau để cho phép traffic đi qua cổng 3001 
+sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 3001 -j ACCEPT
+sudo netfilter-persistent save
+Khởi chạy dự án thứ 2 bằng PM2:Ép Next.js chạy ở cổng mới thay vì 3000 mặc định.
+Di chuyển vào thư mục của dự án thứ 2, nhớ chạy lệnh npm run build trước. 
+Sau đó,  dùng lệnh PM2 có gắn thêm biến môi trường PORT=3001 ở phía trước
+> PORT=3001 pm2 start npm --name "app-so-2" -- start
+Sau khi app chạy lên, hãy thiết lập ngay giới hạn RAM cho nó và lưu lại:Bashpm2 restart app-so-2 --max-memory-restart 350M
+pm2 save
+
+#xóa quy tắc bẻ đường từ 80 sang 3000
+sudo iptables -t nat -D PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 3000
+sudo netfilter-persistent save
+
+
+git clone https://github.com/tên-user/tên-repo-của-bạn.git
+git pull origin dong_gia
+
+PORT=3001 npm run start
+
+
+
