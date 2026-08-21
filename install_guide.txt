@@ -80,5 +80,10 @@ git pull origin dong_gia
 
 PORT=3001 npm run start
 
-
-
+pm2 restart family-tree --max-memory-restart 300M
+##
+PORT=3001 pm2 start npm --name "dong-gia" -- start
+pm2 restart dong-gia --max-memory-restart 300M
+pm2 save
+pm2 show dong-gia
+pm2 show family-tree
