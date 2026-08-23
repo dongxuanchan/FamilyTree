@@ -14,6 +14,6 @@ echo "3. Đang Build lại mã nguồn Next.js..."
 npm run build
 
 echo "4. Khởi động lại ứng dụng PM2..."
-pm2 restart family-tree
+pm2 restart dong_gia
 
 echo "Hoàn tất! Web đã được cập nhật bản mới nhất."
