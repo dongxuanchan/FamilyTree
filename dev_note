@@ -32,3 +32,4 @@ tạm tắt secure cho cookie, phải bật lại secure: process.env.NODE_ENV =
 --thêm phần ghi chú dạng textare
 --bị lỗi không lưu cookie trên iphone/Safari, test lại chức năng crop avatar 
 --avatar phóng to chưa đc nhiều
+--Cài đặt Nginx làm Reverse Proxy

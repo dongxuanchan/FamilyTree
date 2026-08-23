@@ -1,5 +1,7 @@
 --
 ssh -i ssh-key-2026-08-12.key ubuntu@152.69.216.64
+ssh -i ssh-key-2026-08-22.key ubuntu@168.107.87.88
+
  
  http://152.69.216.64:3000/
  
@@ -49,6 +51,8 @@ sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 80 -j ACCEPT
 # Điều hướng ngầm toàn bộ traffic từ cổng 80 sang cổng 3000
 sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 3000
 
+#install pm2 
+sudo npm install -g pm2
 #Chạy lệnh sau để PM2 gọi lệnh npm start và đưa ứng dụng chạy ngầm dưới nền:
 pm2 start npm --name "family-tree" -- start
 
@@ -67,7 +71,8 @@ Khởi chạy dự án thứ 2 bằng PM2:Ép Next.js chạy ở cổng mới th
 Di chuyển vào thư mục của dự án thứ 2, nhớ chạy lệnh npm run build trước. 
 Sau đó,  dùng lệnh PM2 có gắn thêm biến môi trường PORT=3001 ở phía trước
 > PORT=3001 pm2 start npm --name "app-so-2" -- start
-Sau khi app chạy lên, hãy thiết lập ngay giới hạn RAM cho nó và lưu lại:Bashpm2 restart app-so-2 --max-memory-restart 350M
+Sau khi app chạy lên, hãy thiết lập ngay giới hạn RAM cho nó và lưu lại:
+pm2 restart app-so-2 --max-memory-restart 350M
 pm2 save
 
 #xóa quy tắc bẻ đường từ 80 sang 3000
@@ -76,7 +81,13 @@ sudo netfilter-persistent save
 
 
 git clone https://github.com/tên-user/tên-repo-của-bạn.git
+git clone https://github.com/dongxuanchan/FamilyTree.git
 git pull origin dong_gia
+
+# cài Node.js trên OCI
+sudo apt update && sudo apt upgrade -y
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt install -y nodejs build-essential
 
 PORT=3001 npm run start
 
@@ -85,5 +96,20 @@ pm2 restart family-tree --max-memory-restart 300M
 PORT=3001 pm2 start npm --name "dong-gia" -- start
 pm2 restart dong-gia --max-memory-restart 300M
 pm2 save
-pm2 show dong-gia
+pm2 show dong_gia
 pm2 show family-tree
+
+##Swap RAM
+sudo fallocate -l 2G /swapfile
+sudo chmod 600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+#Lưu Swap vĩnh viễn (Rất quan trọng)
+echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+#kiểm tra lại
+free -h
+
+#cách xóa một ứng dụng trong trình quản lý pm2
+pm2 list
+pm2 delete dong-gia
+pm2 save
