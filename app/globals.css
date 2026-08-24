@@ -286,6 +286,29 @@ body {
   stroke-width: 2px;
 }
 
+/* Họa tiết trống đồng (mặt trời tỏa tia 12 cánh + 2 vòng tròn đồng tâm) riêng cho
+   theme heritage, thay cho vòng tròn mờ mặc định ở trên - lặp lại rất mờ làm nền
+   phía sau các card trong cây */
+[data-theme="heritage"] #FamilyChart {
+  
+  opacity: 1; /* giữ để dễ thấy nơi cần chỉnh nếu muốn làm mờ thêm sau này */
+}
+
+[data-theme="heritage"] #FamilyChart::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: inherit;
+  opacity: 0.05;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 140 140'%3E%3Ccircle cx='70' cy='70' r='52' fill='none' stroke='%236b1f2a' stroke-width='1'/%3E%3Ccircle cx='70' cy='70' r='44' fill='none' stroke='%236b1f2a' stroke-width='1'/%3E%3Cpath d='M 70.0 40.0 L 73.36 57.44 L 85.0 44.02 L 79.19 60.81 L 95.98 55.0 L 82.56 66.64 L 100.0 70.0 L 82.56 73.36 L 95.98 85.0 L 79.19 79.19 L 85.0 95.98 L 73.36 82.56 L 70.0 100.0 L 66.64 82.56 L 55.0 95.98 L 60.81 79.19 L 44.02 85.0 L 57.44 73.36 L 40.0 70.0 L 57.44 66.64 L 44.02 55.0 L 60.81 60.81 L 55.0 44.02 L 66.64 57.44 Z' fill='%236b1f2a'/%3E%3C/svg%3E"),
+    radial-gradient(circle at center, rgba(var(--accent-rgb), 0.1), transparent 15%),
+    var(--surface);
+  background-repeat: repeat, no-repeat, no-repeat;
+  background-size: 90px 90px, cover, cover;
+}
+
 .toolbar {
   display: flex;
   flex-wrap: wrap;
