@@ -108,7 +108,7 @@ export default function PersonForm({ onClose, onSaved, personId, initialData }: 
   // Ghép Năm/Tháng/Ngày thành 1 chuỗi ngày sinh, chỉ thêm phần nào người dùng đã điền.
   // Ngày chỉ được ghép vào nếu đã có tháng (tránh chuỗi vô nghĩa kiểu "1990--15").
   function buildBirthDate(): string {
-    if (!birthYear.trim()) return "";
+    if (!birthYear.trim()) return "xxxx";
     let result = "";
     if (birthMonth) {
       result += `${birthMonth.padStart(2, "0")}-`;
@@ -126,14 +126,14 @@ export default function PersonForm({ onClose, onSaved, personId, initialData }: 
       setError("Vui lòng nhập tên");
       return;
     }
-    if (!birthYear.trim()) {
+    /*if (!birthYear.trim()) {
       setError("Vui lòng nhập năm sinh");
-      return;
+     return;
     }
     if (!isAlive && !deathYear.trim()) {
       setError("Vui lòng nhập năm mất, hoặc tick lại \"Còn sống\" nếu chưa rõ");
       return;
-    }
+    }*/
 
     setSaving(true);
     setError("");
@@ -148,7 +148,7 @@ export default function PersonForm({ onClose, onSaved, personId, initialData }: 
           full_name: fullName.trim(),
           gender,
           birth_date: buildBirthDate(),
-          death_date: isAlive ? null : deathYear.trim(),
+          death_date: isAlive ? null : (!deathYear.trim() ? 'xxxx':deathYear.trim()),
           avatar,
           phone: phone.trim() || null,
           facebook: facebook.trim() || null,
