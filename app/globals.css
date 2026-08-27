@@ -428,6 +428,18 @@ body {
   cursor: not-allowed;
 }
 
+.inline-field {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.inline-field input {
+  width: auto;
+  margin-top: 0;
+}
+
 .checkbox-row {
   display: flex !important;
   align-items: center;

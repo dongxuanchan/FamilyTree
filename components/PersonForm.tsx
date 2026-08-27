@@ -251,9 +251,8 @@ export default function PersonForm({ onClose, onSaved, personId, initialData }: 
           </label>
  
           {!isAlive && (
-            <label>
-              Năm mất
-              <div className="date-row">
+            <label className="inline-field">
+              Năm mất 
                 <input className="daymonthyearinput" 
                   type="number"
                   placeholder="Năm mất"
@@ -261,8 +260,7 @@ export default function PersonForm({ onClose, onSaved, personId, initialData }: 
                   onChange={(e) => setDeathYear(e.target.value)}
                   min={1900}
                   max={2050}
-                />
-              </div>
+                /> 
             </label>
           )}
 
