@@ -39,6 +39,7 @@ interface Props {
 
 const MONTHS = Array.from({ length: 12 }, (_, i) => i + 1);
 const DAYS = Array.from({ length: 31 }, (_, i) => i + 1);
+const BIRTH_ORDER = Array.from({ length: 15 }, (_, i) => i + 1);
 
 // Chiều ngược lại của buildBirthDate() bên dưới: tách chuỗi đã lưu dd-mm-yyyy ngược trở lại thành 3 phần Năm/Tháng/Ngày để điền sẵn
 // vào form sửa. Number()->String() để bỏ số 0 đệm ("03" -> "3"), khớp value của <option>.
@@ -84,6 +85,10 @@ export default function PersonForm({ onClose, onSaved, personId, initialData }: 
   const [facebook, setFacebook] = useState(initialData?.facebook ?? "");
   const [occupation, setOccupation] = useState(initialData?.occupation ?? "");
   const [address, setAddress] = useState(initialData?.address ?? "");
+  const [birthOrder, setBirthOrder] = useState(
+    initialData?.birth_order != null ? String(initialData.birth_order) : ""
+  );
+
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -153,7 +158,8 @@ export default function PersonForm({ onClose, onSaved, personId, initialData }: 
           phone: phone.trim() || null,
           facebook: facebook.trim() || null,
           occupation: occupation.trim() || null,
-          address: address.trim() || null
+          address: address.trim() || null,
+          birth_order: birthOrder.trim() ? Number(birthOrder) : null
         })
       });
       if (!res.ok) {
@@ -239,6 +245,23 @@ export default function PersonForm({ onClose, onSaved, personId, initialData }: 
                 max={2050}
               />
             </div>
+          </label>
+
+          <label className="inline-field">
+            Con thứ mấy trong gia đình
+            <select 
+                value={birthOrder}
+                onChange={(e) => {
+                  setBirthOrder(e.target.value); 
+                }}
+              >
+                <option value="">--</option>
+                {BIRTH_ORDER.map((m) => (
+                  <option key={m} value={m}>
+                    {m}
+                  </option>
+                ))}
+              </select>
           </label>
  
           <label className="checkbox-row">

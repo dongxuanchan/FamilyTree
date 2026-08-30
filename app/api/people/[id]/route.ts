@@ -40,7 +40,8 @@ export async function PUT(req: NextRequest, { params }: Params) {
     "phone",
     "facebook",
     "occupation",
-    "address"
+    "address",
+    "birth_order"
   ];
   const updates: string[] = [];
   const values: unknown[] = [];

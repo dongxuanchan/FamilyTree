@@ -32,6 +32,7 @@ db.exec(`
     facebook TEXT,
     occupation TEXT,
     address TEXT,
+    birth_order INTEGER,
     created_at TEXT DEFAULT (datetime('now'))
   );
 

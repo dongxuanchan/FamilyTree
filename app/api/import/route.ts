@@ -44,8 +44,8 @@ export async function POST(req: NextRequest) {
 
   // ON CONFLICT(id) DO UPDATE = "upsert": nếu id đã tồn tại thì cập nhật đè, chưa có thì thêm mới
   const upsertPerson = db.prepare(`
-    INSERT INTO people (id, full_name, gender, birth_date, death_date, avatar, notes, phone, facebook, occupation, address)
-    VALUES (@id, @full_name, @gender, @birth_date, @death_date, @avatar, @notes, @phone, @facebook, @occupation, @address)
+    INSERT INTO people (id, full_name, gender, birth_date, death_date, avatar, notes, phone, facebook, occupation, address, birth_order)
+    VALUES (@id, @full_name, @gender, @birth_date, @death_date, @avatar, @notes, @phone, @facebook, @occupation, @address, @birth_order)
     ON CONFLICT(id) DO UPDATE SET
       full_name = excluded.full_name,
       gender = excluded.gender,
@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
       phone = excluded.phone,
       facebook = excluded.facebook,
       occupation = excluded.occupation,
-      address = excluded.address
+      birth_order = excluded.birth_order
   `);
 
   const upsertRelationship = db.prepare(`
@@ -84,7 +84,8 @@ export async function POST(req: NextRequest) {
         phone: p.phone ?? null,
         facebook: p.facebook ?? null,
         occupation: p.occupation ?? null,
-        address: p.address ?? null
+        address: p.address ?? null,
+        birth_order: p.birth_order ?? null,
       });
     }
 

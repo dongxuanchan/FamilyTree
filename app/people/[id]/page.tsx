@@ -36,6 +36,7 @@ export default function PersonDetailPage({ params }: PageProps) {
 
   // Danh sách field hiển thị dạng bảng - lọc bỏ field nào không có dữ liệu
   const fields: { label: string; value: string | null; isLink?: boolean }[] = [
+    { label: "Con thứ", value: person.birth_order != null ? String(person.birth_order) : null },
     { label: "Nghề nghiệp", value: person.occupation },
     { label: "Số điện thoại", value: person.phone },
     { label: "Facebook", value: person.facebook, isLink: true },

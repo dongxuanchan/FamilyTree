@@ -28,7 +28,8 @@ export async function POST(req: NextRequest) {
     phone,
     facebook,
     occupation,
-    address
+    address,
+    birth_order
   } = body;
 
   if (!full_name || !gender) {
@@ -40,8 +41,8 @@ export async function POST(req: NextRequest) {
 
   const id = uuidv4();
   db.prepare(
-    `INSERT INTO people (id, full_name, gender, birth_date, death_date, avatar, notes, phone, facebook, occupation, address)
-     VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+    `INSERT INTO people (id, full_name, gender, birth_date, death_date, avatar, notes, phone, facebook, occupation, address, birth_order)
+     VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
   ).run(
     id,
     full_name,
@@ -53,7 +54,8 @@ export async function POST(req: NextRequest) {
     phone ?? null,
     facebook ?? null,
     occupation ?? null,
-    address ?? null
+    address ?? null,
+    birth_order ?? null
   );
 
   return NextResponse.json({ id }, { status: 201 });

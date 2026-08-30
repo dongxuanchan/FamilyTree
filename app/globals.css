@@ -435,7 +435,7 @@ body {
   margin-top: 10px;
 }
 
-.inline-field input {
+.inline-field input, .inline-field select {
   width: auto;
   margin-top: 0;
 }

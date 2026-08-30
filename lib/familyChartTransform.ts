@@ -12,6 +12,7 @@ export interface PersonRow {
   facebook: string | null;
   occupation: string | null;
   address: string | null;
+  birth_order: number | null;
 }
 
 interface RelRow {
