@@ -31,6 +31,7 @@ export interface FamilyChartNode {
     "death date"?: string;
     avatar?: string;
     notes?: string;
+    birth_order?: number;
   };
   rels: {
     // Mảng ID cha/mẹ - hỗ trợ 1 phần tử (con riêng, chỉ biết 1 bên) hoặc 2 phần tử
@@ -54,7 +55,8 @@ export function getFamilyChartData(): FamilyChartNode[] {
         ...(p.birth_date ? { birthday: p.birth_date } : {}),
         ...(p.death_date ? { "death date": p.death_date } : {}),
         ...(p.avatar ? { avatar: p.avatar } : {}),
-        ...(p.notes ? { notes: p.notes } : {})
+        ...(p.notes ? { notes: p.notes } : {}),
+        ...(p.birth_order != null ? { birth_order: p.birth_order } : {})
       },
       rels: {}
     });

@@ -119,6 +119,18 @@ function truncateToGenerations(
     }));
 }
 
+// So sánh theo "birth_order" (con thứ mấy) - người chưa nhập số này bị xếp xuống
+// cuối cùng, không làm xáo trộn vị trí của những người đã có số. Dùng cùng cách
+// truy cập "an toàn" (thử nhiều cấp .data) như buildCardHtml, vì chưa rõ chắc chắn
+// TreeDatum truyền vào đây có cùng cấu trúc lồng hay không.
+function sortChildrenByBirthOrder(a: any, b: any): number {
+  const personA = a?.data?.data ?? a?.data ?? a ?? {};
+  const personB = b?.data?.data ?? b?.data ?? b ?? {};
+  const orderA = personA.birth_order ?? Number.MAX_SAFE_INTEGER;
+  const orderB = personB.birth_order ?? Number.MAX_SAFE_INTEGER;
+  return orderA - orderB;
+}
+
 export default function FamilyTree() {
   const chartRef = useRef<HTMLDivElement>(null);
   const pendingFocusIdRef = useRef<string | null>(null);
@@ -255,7 +267,8 @@ export default function FamilyTree() {
         .setCardYSpacing(ySpacing)
         .setOrientationVertical()
         // Tắt card rỗng tự động thêm cho người chỉ có 1 cha/mẹ (con riêng)
-        .setSingleParentEmptyCard(false);
+        .setSingleParentEmptyCard(false)
+        .setSortChildrenFunction(sortChildrenByBirthOrder);
 
       f3Chart
         .setCardHtml()
