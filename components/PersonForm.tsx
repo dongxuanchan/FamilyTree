@@ -241,7 +241,6 @@ export default function PersonForm({ onClose, onSaved, personId, initialData }: 
                 placeholder="Năm *"
                 value={birthYear}
                 onChange={(e) => setBirthYear(e.target.value)}
-                min={1900}
                 max={2050}
               />
             </div>
@@ -281,7 +280,6 @@ export default function PersonForm({ onClose, onSaved, personId, initialData }: 
                   placeholder="Năm mất"
                   value={deathYear}
                   onChange={(e) => setDeathYear(e.target.value)}
-                  min={1900}
                   max={2050}
                 /> 
             </label>
