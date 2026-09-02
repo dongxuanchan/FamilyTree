@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "1. Đang kéo code mới từ Github..."
-git pull origin dong_gia
+git pull origin do_gia
 
 # Kiểm tra tham số $1 xem có bằng -i hoặc --install không
 if [ "$1" == "-i" ] || [ "$1" == "--install" ]; then
@@ -14,6 +14,6 @@ echo "3. Đang Build lại mã nguồn Next.js..."
 npm run build
 
 echo "4. Khởi động lại ứng dụng PM2..."
-pm2 restart dong_gia
+pm2 restart family-tree
 
 echo "Hoàn tất! Web đã được cập nhật bản mới nhất."
