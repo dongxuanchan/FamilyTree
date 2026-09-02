@@ -10,7 +10,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="vi" 
     //data-theme="forest"
-    data-theme="heritage"
+    //data-theme="heritage"
     card-layout="vertical"
     //data-layout="compact" // compact, tiny
     >   
