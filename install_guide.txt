@@ -115,7 +115,7 @@ pm2 delete dong-gia
 pm2 save
 
 
-
+sudo apt install sqlite3
 sqlite3 family.db
 BEGIN;
 UPDATE people SET isSeed = true WHERE id = '6000ff9c-2fb4-43cd-99d5-6ac270d71e6d';
