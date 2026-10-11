@@ -69,7 +69,7 @@ function truncateToGenerations(
   if (data.length === 0) return data;
 
   const byId = new Map(data.map((n) => [n.id, n]));
-  const seed = data.find((n) => !n.rels.parents || n.rels.parents.length === 0) ?? data[0];
+  const seed = data.find((n) => n.data.isSeed) ?? data[0];
 
   const included = new Set<string>();
 
@@ -87,6 +87,7 @@ function truncateToGenerations(
   }
 
   function walkDown(id: string, gensLeft: number) {
+    //console.log('wdid: ', id);
     addWithSpouses(id);
     if (gensLeft <= 0) return;
     for (const c of byId.get(id)?.rels.children ?? []) walkDown(c, gensLeft - 1);
@@ -116,7 +117,7 @@ function truncateToGenerations(
         children: n.rels.children?.filter((id) => included.has(id)),
         spouses: n.rels.spouses?.filter((id) => included.has(id))
       }
-    }));
+    })).sort((a, b) => Number(Boolean(b.data.isSeed)) - Number(Boolean(a.data.isSeed)));
 }
 
 // So sánh theo "birth_order" (con thứ mấy) - người chưa nhập số này bị xếp xuống
@@ -245,6 +246,7 @@ export default function FamilyTree() {
 
       //cắt bớt data nếu User chọn view Home 
       const treeData = showFullTree ? data : truncateToGenerations(data, 0, 1);
+      //console.log('treeData: ', treeData);
 
       // family-chart thao tác trực tiếp với DOM -> chỉ import ở client và dọn dẹp node cũ trước khi vẽ lại
       chartRef.current.innerHTML = "";
