@@ -13,6 +13,7 @@ export interface PersonRow {
   occupation: string | null;
   address: string | null;
   birth_order: number | null;
+  isSeed: boolean | null;
 }
 
 interface RelRow {
@@ -32,6 +33,7 @@ export interface FamilyChartNode {
     avatar?: string;
     notes?: string;
     birth_order?: number;
+    isSeed?: boolean;
   };
   rels: {
     // Mảng ID cha/mẹ - hỗ trợ 1 phần tử (con riêng, chỉ biết 1 bên) hoặc 2 phần tử
@@ -56,7 +58,8 @@ export function getFamilyChartData(): FamilyChartNode[] {
         ...(p.death_date ? { "death date": p.death_date } : {}),
         ...(p.avatar ? { avatar: p.avatar } : {}),
         ...(p.notes ? { notes: p.notes } : {}),
-        ...(p.birth_order != null ? { birth_order: p.birth_order } : {})
+        ...(p.birth_order != null ? { birth_order: p.birth_order } : {}),
+        ...(p.isSeed != null ? { isSeed: p.isSeed } : {})
       },
       rels: {}
     });

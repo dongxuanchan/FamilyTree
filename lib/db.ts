@@ -33,6 +33,7 @@ db.exec(`
     occupation TEXT,
     address TEXT,
     birth_order INTEGER,
+    isSeed BOOLEAN,
     created_at TEXT DEFAULT (datetime('now'))
   );
 
